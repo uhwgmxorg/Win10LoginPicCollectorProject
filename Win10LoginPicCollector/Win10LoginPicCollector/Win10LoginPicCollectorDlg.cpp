@@ -278,7 +278,7 @@ void CWin10LoginPicCollectorDlg::OnClickedButtonCopy()
 {
 	TRACE(_T("OnClickedButtonCopy was pressed\n"));
 
-
+	m_appSettings.CopyFile(L"",L"");
 }
 
 #pragma endregion
