@@ -208,7 +208,7 @@ void CWin10LoginPicCollectorDlg::OnButtonSelectSourcePath()
 {
 	TRACE(_T("OnButtonSelectSourcePath was pressed\n"));
 
-	std::wstring strPath = CAppSettings::GetPath();
+	std::wstring strPath = CAppSettings::GetPath(m_appSettings.m_strSourcePath.c_str());
 	TRACE(_T("GetPath() = %s\n"), strPath.c_str());
 	m_appSettings.m_strSourcePath = strPath;
 	m_appSettings.SaveConfig();
@@ -223,7 +223,7 @@ void CWin10LoginPicCollectorDlg::OnButtonSelectDestinationPath()
 {
 	TRACE(_T("OnButtonSelectDestinationPath was pressed\n"));
 
-	std::wstring strPath = CAppSettings::GetPath();
+	std::wstring strPath = CAppSettings::GetPath(m_appSettings.m_strDestinationPath.c_str());
 	TRACE(_T("GetPath() = %s\n"), strPath.c_str());
 	m_appSettings.m_strDestinationPath = strPath;
 	m_appSettings.SaveConfig();

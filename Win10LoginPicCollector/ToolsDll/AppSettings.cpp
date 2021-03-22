@@ -240,11 +240,17 @@ std::wstring CAppSettings::GetPath(const wchar_t* lpszPath)
     CString cstrPath;
 
     CFolderPickerDialog* pdlgPickFolder = new CFolderPickerDialog(lpszPath);
-    pdlgPickFolder->DoModal();
-    cstrPath = pdlgPickFolder->GetPathName();
+    if (pdlgPickFolder->DoModal() == IDOK)
+    {
+        cstrPath = pdlgPickFolder->GetPathName();
+        cstrPath += L"\\";
+    }
+    else
+    {
+        cstrPath = lpszPath;
+    }
     delete pdlgPickFolder;
 
-    cstrPath += L"\\";
 
     std::wstring strPath((LPCTSTR)cstrPath);
 
