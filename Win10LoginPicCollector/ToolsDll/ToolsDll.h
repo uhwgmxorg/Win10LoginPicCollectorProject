@@ -3,6 +3,8 @@
 
 #pragma once
 
+#include <string>
+
 #ifndef __AFXWIN_H__
 	#error "'pch.h' vor dieser Datei für PCH einschließen"
 #endif
@@ -14,7 +16,7 @@
 // For information about the implementation of this class, see ToolsDll.cpp.
 //
 
-class CToolsDllApp : public CWinApp
+class AFX_EXT_CLASS CToolsDllApp : public CWinApp
 {
 public:
 	CToolsDllApp();
@@ -24,4 +26,7 @@ public:
 	virtual BOOL InitInstance();
 
 	DECLARE_MESSAGE_MAP()
+
+public:
+	static std::wstring GetExePath();
 };

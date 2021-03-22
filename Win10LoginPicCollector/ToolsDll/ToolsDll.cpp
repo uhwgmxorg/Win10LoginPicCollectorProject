@@ -5,6 +5,8 @@
 #include "framework.h"
 #include "ToolsDll.h"
 
+#include <filesystem>
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -61,4 +63,19 @@ BOOL CToolsDllApp::InitInstance()
 	CWinApp::InitInstance();
 
 	return TRUE;
+}
+
+/// <summary>
+/// GetExePath
+/// Get the path of the running exe
+/// </summary>
+/// <returns></returns>
+std::wstring CToolsDllApp::GetExePath()
+{
+	wchar_t path[MAX_PATH] = { 0 };
+	GetModuleFileNameW(NULL, path, MAX_PATH);
+
+	std::filesystem::path exe_path(path);
+
+	return std::wstring(exe_path.parent_path());
 }

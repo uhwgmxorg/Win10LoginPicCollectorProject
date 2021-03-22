@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "AppSettings.h"
+#include "ToolsDll.h"
 
 long CAppSettings::m_lLeft = 10;
 long CAppSettings::m_lTop = 10;
@@ -10,7 +11,7 @@ std::wstring CAppSettings::m_strSourcePath = L"C:\\Users\\%USERNAME%\\AppData\\L
 std::wstring CAppSettings::m_strDestinationPath = L"C:\\DestinationPath";
 
 // Initial values
-std::wstring CAppSettings::m_strIniFlileName = L".\\Win10LoginPicCollector.ini";
+std::wstring CAppSettings::m_strIniFlileName = L"Win10LoginPicCollector.ini";
 std::wstring CAppSettings::m_strSourcePathIni = L"C:\\Users\\%USERNAME%\\AppData\\Local\\Packages\\Microsoft.Windows.ContentDeliveryManager_cw5n1h2txyewy\\LocalState\\Assets";
 std::wstring CAppSettings::m_strDestinationPathIni = L"C:\\DestinationPath";
 
@@ -46,10 +47,11 @@ CAppSettings::~CAppSettings()
 /// <returns>lastError the last Win 32 Error</returns>
 unsigned int CAppSettings::LoadConfig()
 {
+    std::wstring exe_path(CToolsDllApp::GetExePath() + L"\\");
     wchar_t szValue[SZ_VALUE_SIZE];
-
     wchar_t szIniFile[MAX_PATH];
-    wcscpy_s(szIniFile, m_strIniFlileName.c_str());
+    wcscpy_s(szIniFile, (exe_path + m_strIniFlileName).c_str());
+
 
     // [Window] section
     m_lLeft = GetPrivateProfileIntW(L"Window", L"Left", m_lLeft, szIniFile);
@@ -62,6 +64,7 @@ unsigned int CAppSettings::LoadConfig()
     m_strSourcePath = szValue;
     GetPrivateProfileStringW(L"App", L"DestinationPath", m_strDestinationPath.c_str(), szValue, SZ_VALUE_SIZE, szIniFile);
     m_strDestinationPath = szValue;
+
 
     DWORD dwerr = GetLastError();
     // Get the last Error in text
@@ -85,11 +88,10 @@ unsigned int CAppSettings::LoadConfig()
 unsigned int CAppSettings::SaveConfig()
 {
     bool flag;
+    std::wstring exe_path(CToolsDllApp::GetExePath() + L"\\");
     wchar_t szValue[SZ_VALUE_SIZE];
-
     wchar_t szIniFile[MAX_PATH];
-    wcscpy_s(szIniFile, m_strIniFlileName.c_str());
-
+    wcscpy_s(szIniFile, (exe_path + m_strIniFlileName).c_str());
 
 #pragma warning(disable : 4996) // error C4996: 'swprintf': function has been changed to conform with the ISO C standard, adding an extra character count parameter.
 
@@ -229,7 +231,7 @@ std::vector<std::wstring> CAppSettings::GetAllFilesInDir(const wchar_t* lpszPath
 
 /// <summary>
 /// GetPath
-/// Get a File path from 
+/// Get a File path from a dialog file picker
 /// </summary>
 /// <param name="lpszPath"></param>
 /// <returns></returns>
