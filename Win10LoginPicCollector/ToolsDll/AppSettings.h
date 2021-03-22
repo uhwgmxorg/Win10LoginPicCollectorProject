@@ -21,8 +21,9 @@ public:
 
 private:
     // Other member vars
-    static std::wstring m_IniFlileName;
+    static std::wstring m_strIniFlileName;
     static std::wstring m_strSourcePathIni;
+    static std::wstring m_strDestinationPathIni;
 
 public:
     CAppSettings();

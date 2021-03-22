@@ -272,5 +272,31 @@ std::wstring CAppSettings::GetMyUserName()
 /// <param name="lpszDestinationFile"></param>
 void CAppSettings::CopyFile(const wchar_t* lpszSourceFile, const wchar_t* lpszDestinationFile)
 {
+    TRACE(_T("Copy files from %s to %s\n"), lpszSourceFile, lpszDestinationFile);
 
+    std::wstring path_file(lpszSourceFile);
+    // Replace the %USERNAME% with the real username if containing
+    if (path_file.find(L"%USERNAME%") != -1)
+        path_file.replace(path_file.find(L"%USERNAME%"), wcslen(L"%USERNAME%"), CAppSettings::GetMyUserName().c_str());
+
+    std::vector<std::wstring> files = GetAllFilesInDir((path_file + L"\\*.*").c_str());
+    std::wstring s_path = path_file;
+    std::wstring d_path(lpszDestinationFile);
+    std::wstring s_file;
+    std::wstring d_file;
+
+    for (auto const& file : files)
+    {
+        s_file = s_path + L"\\" + file;
+        d_file = d_path + L"\\" + file + L".jpg";
+        ::CopyFile(s_file.c_str(), d_file.c_str(), FALSE);
+
+        DWORD dwerr = GetLastError();
+        // Get the last Error in text
+        wchar_t buf[256];
+        FormatMessageW(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+            NULL, dwerr, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+            buf, (sizeof(buf) / sizeof(wchar_t)), NULL);
+        TRACE(_T("Failed on ::CopyFile LastError LastError %u %s\n"), dwerr, buf);
+    }
 }
