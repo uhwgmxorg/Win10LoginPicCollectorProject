@@ -37,6 +37,7 @@ public:
     static int NumberOfFilesIn(const wchar_t* lpszPath);
     static std::vector<std::wstring> GetAllFilesInDir(const wchar_t* lpszPath);
     static std::wstring GetPath(const wchar_t* lpszPath = NULL);
+    static std::wstring GetMyUserName();
     static void CopyFile(const wchar_t* lpszSourceFile, const wchar_t* lpszDestinationFile);
 };
 

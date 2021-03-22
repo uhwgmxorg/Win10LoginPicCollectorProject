@@ -187,9 +187,9 @@ HCURSOR CWin10LoginPicCollectorDlg::OnQueryDragIcon()
 }
 
 //------------------------------/
-//-       Button Events        -/
+//-  ToolBar Button Events     -/
 //------------------------------/
-#pragma region My Button Events
+#pragma region My ToolBar Button Events
 
 /// <summary>
 /// OnButtonExit
@@ -202,7 +202,7 @@ void CWin10LoginPicCollectorDlg::OnButtonExit()
 }
 
 /// <summary>
-/// OnButtonSelectPath
+/// OnButtonSelectSourcePath
 /// </summary>
 void CWin10LoginPicCollectorDlg::OnButtonSelectSourcePath()
 {
@@ -387,6 +387,11 @@ void CWin10LoginPicCollectorDlg::InitSourceBranch()
 {
 	CString strPath(m_appSettings.m_strSourcePath.c_str());
 	strPath += L"\\*.*";
+
+	// Replace the %USERNAME% with the real username if containing
+	if (strPath.Find(L"%USERNAME%") != -1)
+		strPath.Replace(L"%USERNAME%", CAppSettings::GetMyUserName().c_str());
+
 	m_iNumFiles = CAppSettings::NumberOfFilesIn(strPath);
 	CString strHelp(m_appSettings.m_strSourcePath.c_str());
 	m_strSourcePath = strHelp;

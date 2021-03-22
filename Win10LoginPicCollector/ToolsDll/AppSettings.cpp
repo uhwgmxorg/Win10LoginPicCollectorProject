@@ -9,8 +9,10 @@ long CAppSettings::m_lBottom = 210;
 std::wstring CAppSettings::m_strSourcePath = L"C:\\Users\\%USERNAME%\\AppData\\Local\\Packages\\Microsoft.Windows.ContentDeliveryManager_cw5n1h2txyewy\\LocalState\\Assets";
 std::wstring CAppSettings::m_strDestinationPath = L"C:\\DestinationPath";
 
-std::wstring CAppSettings::m_IniFlileName = L".\\Win10LoginPicCollector.ini";
+// Initial values
+std::wstring CAppSettings::m_strIniFlileName = L".\\Win10LoginPicCollector.ini";
 std::wstring CAppSettings::m_strSourcePathIni = L"C:\\Users\\%USERNAME%\\AppData\\Local\\Packages\\Microsoft.Windows.ContentDeliveryManager_cw5n1h2txyewy\\LocalState\\Assets";
+std::wstring CAppSettings::m_strDestinationPathIni = L"C:\\DestinationPath";
 
 /// <summary>
 /// Constructor
@@ -26,7 +28,7 @@ CAppSettings::CAppSettings()
 /// <param name="intFile"></param>
 CAppSettings::CAppSettings(std::wstring intFile)
 {
-    m_IniFlileName = intFile;
+    m_strIniFlileName = intFile;
     LoadConfig();
 }
 
@@ -47,7 +49,7 @@ unsigned int CAppSettings::LoadConfig()
     wchar_t szValue[SZ_VALUE_SIZE];
 
     wchar_t szIniFile[MAX_PATH];
-    wcscpy_s(szIniFile, m_IniFlileName.c_str());
+    wcscpy_s(szIniFile, m_strIniFlileName.c_str());
 
     // [Window] section
     m_lLeft = GetPrivateProfileIntW(L"Window", L"Left", m_lLeft, szIniFile);
@@ -86,7 +88,7 @@ unsigned int CAppSettings::SaveConfig()
     wchar_t szValue[SZ_VALUE_SIZE];
 
     wchar_t szIniFile[MAX_PATH];
-    wcscpy_s(szIniFile, m_IniFlileName.c_str());
+    wcscpy_s(szIniFile, m_strIniFlileName.c_str());
 
 
 #pragma warning(disable : 4996) // error C4996: 'swprintf': function has been changed to conform with the ISO C standard, adding an extra character count parameter.
@@ -141,8 +143,9 @@ bool CAppSettings::CreateDir(const wchar_t* lpszDirname)
 /// </summary>
 void CAppSettings::ResetIniFile()
 {
-    DeleteFileW(m_IniFlileName.c_str());
+    DeleteFileW(m_strIniFlileName.c_str());
     m_strSourcePath = m_strSourcePathIni;
+    m_strDestinationPath = m_strDestinationPathIni;
     SaveConfig();
 }
 
@@ -247,6 +250,19 @@ std::wstring CAppSettings::GetPath(const wchar_t* lpszPath)
     //::MessageBox(NULL, L"The selected path is: " + cstrPath, L"For Debuging", MB_OK);
 
     return strPath;
+}
+
+/// <summary>
+/// GetMyUserName
+/// </summary>
+/// <returns></returns>
+std::wstring CAppSettings::GetMyUserName()
+{
+    wchar_t username[UNLEN + 1];
+    DWORD username_len = UNLEN + 1;
+    GetUserNameW(username, &username_len);
+
+    return std::wstring(username);
 }
 
 /// <summary>
