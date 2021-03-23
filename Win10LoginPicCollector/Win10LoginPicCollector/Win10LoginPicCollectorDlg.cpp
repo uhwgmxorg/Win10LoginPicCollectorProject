@@ -61,11 +61,13 @@ BEGIN_MESSAGE_MAP(CWin10LoginPicCollectorDlg, CDialogEx)
 	ON_COMMAND(ID_BUTTON_SELECT_PATH, &CWin10LoginPicCollectorDlg::OnButtonSelectSourcePath)
 	ON_COMMAND(ID_BUTTON_EDIT_INI, &CWin10LoginPicCollectorDlg::OnButtonEditIni)
 	ON_COMMAND(ID_BUTTON_ABOUT, &CWin10LoginPicCollectorDlg::OnButtonAbout)
-	ON_WM_TIMER()
-	ON_WM_CLOSE()
 	ON_COMMAND(ID_BUTTON_SELECT_DESTINATION_PATH, &CWin10LoginPicCollectorDlg::OnButtonSelectDestinationPath)
 	ON_COMMAND(ID_BUTTON_RESET_CONFIG, &CWin10LoginPicCollectorDlg::OnButtonResetConfig)
 	ON_BN_CLICKED(ID_BUTTON_COPY, &CWin10LoginPicCollectorDlg::OnClickedButtonCopy)
+	ON_WM_TIMER()
+	ON_WM_CLOSE()
+	ON_NOTIFY_EX_RANGE(TTN_NEEDTEXTW, 0, 0xFFFF, OnToolTipText)
+	ON_NOTIFY_EX_RANGE(TTN_NEEDTEXTA, 0, 0xFFFF, OnToolTipText)
 END_MESSAGE_MAP()
 
 /// <summary>
@@ -103,7 +105,6 @@ BOOL CWin10LoginPicCollectorDlg::OnInitDialog()
 
 	// TODO: Add extra initialization here
 	m_strVersion = L"1.0.0.0";
-	SetWindowText(_T("Window 10 Login Picture Collector Version " + m_strVersion));
 
 #pragma region Add ToolBar to Dlg
 	// Create the ToolBar
@@ -151,14 +152,11 @@ BOOL CWin10LoginPicCollectorDlg::OnInitDialog()
 	MoveWindow(rcWindow, FALSE); // Redraw Window
 
 	// Now we REALLY Redraw the Toolbar
+	m_ctrlToolBar1.SetBarStyle(CBRS_ALIGN_TOP | CBRS_TOOLTIPS | CBRS_FLYBY);
 	RepositionBars(AFX_IDW_CONTROLBAR_FIRST, AFX_IDW_CONTROLBAR_LAST, 0);
 #pragma endregion
 
 #pragma region Add StatusBar to Dlg
-	// Set the icon for this dialog. 
-	SetIcon(m_hIcon, TRUE);        // Set big icon
-	SetIcon(m_hIcon, FALSE);       // Set small icon
-
     // Here is what you need, to create a status bar
 	m_StatusBar.Create(this);     //Create status bar
 	m_StatusBar.SetIndicators(indicators, 2);
@@ -178,9 +176,25 @@ BOOL CWin10LoginPicCollectorDlg::OnInitDialog()
 	SetTimer(100, 1000, NULL);
 #pragma endregion
 
-
 	// Load the App settings
 	m_appSettings.LoadConfig();
+
+#pragma region Set Version and architecture in Window Text
+	// Set Version and architecture in Window Text
+	CString strWindowText;
+	CString strVersion = m_strVersion;
+	CString strArchitecture;
+	if (sizeof(void*) == 4)
+		strArchitecture = "x32";
+	else
+		strArchitecture = "x64";
+#ifdef DEBUG
+	strWindowText.Format(L"Window 10 Login Picture Collector --- Debug Version %s %s", strVersion, strArchitecture);
+#else
+	strWindowText.Format(L"Window 10 Login Picture Collector --- Release %s %s", strVersion, strArchitecture);
+#endif // DEBUG
+	SetWindowText(strWindowText);
+#pragma endregion
 
 	InitSourceBranch();
 	InitDestinationBranch();
@@ -393,6 +407,65 @@ void CWin10LoginPicCollectorDlg::OnTimer(UINT_PTR nIDEvent)
 		m_StatusBar.SetPaneText(1, time.Format("%H:%M:%S"));
 	}
 	CDialogEx::OnTimer(nIDEvent);
+}
+
+/// <summary>
+/// OnToolTipText
+/// </summary>
+/// <param name=""></param>
+/// <param name="pNMHDR"></param>
+/// <param name="pResult"></param>
+/// <returns></returns>
+BOOL CWin10LoginPicCollectorDlg::OnToolTipText(UINT, NMHDR* pNMHDR, LRESULT* pResult)
+{
+	ASSERT(pNMHDR->code == TTN_NEEDTEXTA || pNMHDR->code == TTN_NEEDTEXTW);
+
+	// if there is a top level routing frame then let it handle the message
+	if (GetRoutingFrame() != NULL) return FALSE;
+
+	// to be thorough we will need to handle UNICODE versions of the message also !!
+	TOOLTIPTEXTA* pTTTA = (TOOLTIPTEXTA*)pNMHDR;
+	TOOLTIPTEXTW* pTTTW = (TOOLTIPTEXTW*)pNMHDR;
+	TCHAR szFullText[2048];
+	CString strTipText;
+	UINT nID = pNMHDR->idFrom;
+
+	if (pNMHDR->code == TTN_NEEDTEXTA && (pTTTA->uFlags & TTF_IDISHWND) ||
+		pNMHDR->code == TTN_NEEDTEXTW && (pTTTW->uFlags & TTF_IDISHWND))
+	{
+		// idFrom is actually the HWND of the tool 
+		nID = ::GetDlgCtrlID((HWND)nID);
+	}
+
+	// nID is the ToolTip Buton Id like 
+	// ID_BUTTON_EXIT (32772) in ouer case
+	if (nID != 0) // will be zero on a separator
+	{
+		AfxLoadString(nID, szFullText);
+		strTipText = szFullText;
+
+		// see: https://docs.microsoft.com/en-us/windows/win32/api/commctrl/ns-commctrl-nmttdispinfow
+		ASSERT(strTipText.GetLength() < 80);
+
+		if (pNMHDR->code == TTN_NEEDTEXTA)
+		{
+			_wcstombsz(pTTTA->szText, strTipText, sizeof(pTTTA->szText));
+		}
+		else
+		{
+			lstrcpyn(pTTTW->szText, strTipText, sizeof(pTTTW->szText));
+		}
+
+		*pResult = 0;
+
+		// bring the tooltip window above other popup windows
+		::SetWindowPos(pNMHDR->hwndFrom, HWND_TOP, 0, 0, 0, 0,
+			SWP_NOACTIVATE | SWP_NOSIZE | SWP_NOMOVE | SWP_NOOWNERZORDER);
+
+		return TRUE;
+	}
+
+	return FALSE;
 }
 
 /// <summary>
