@@ -27,6 +27,7 @@ public:
 protected:
 	HICON m_hIcon;
 	CToolBar m_ctrlToolBar1;
+	CStatusBar m_StatusBar;
 	CAppSettings m_appSettings;
 	CString m_strVersion;
 
@@ -56,6 +57,7 @@ private:
 	void InsertItem(CString strItem);
 
 public:
+	afx_msg void OnTimer(UINT_PTR nIDEvent);
 	afx_msg void OnClose();
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 	CString m_strSourcePath;

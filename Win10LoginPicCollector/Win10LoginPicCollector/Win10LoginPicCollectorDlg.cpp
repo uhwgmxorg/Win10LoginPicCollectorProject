@@ -15,6 +15,12 @@
 #define new DEBUG_NEW
 #endif
 
+static UINT BASED_CODE indicators[] =
+{
+	ID_INDICATOR_PANE,
+	ID_INDICATOR_TIME
+};
+
 
 // CWin10LoginPicCollectorDlg dialog
 
@@ -55,6 +61,7 @@ BEGIN_MESSAGE_MAP(CWin10LoginPicCollectorDlg, CDialogEx)
 	ON_COMMAND(ID_BUTTON_SELECT_PATH, &CWin10LoginPicCollectorDlg::OnButtonSelectSourcePath)
 	ON_COMMAND(ID_BUTTON_EDIT_INI, &CWin10LoginPicCollectorDlg::OnButtonEditIni)
 	ON_COMMAND(ID_BUTTON_ABOUT, &CWin10LoginPicCollectorDlg::OnButtonAbout)
+	ON_WM_TIMER()
 	ON_WM_CLOSE()
 	ON_COMMAND(ID_BUTTON_SELECT_DESTINATION_PATH, &CWin10LoginPicCollectorDlg::OnButtonSelectDestinationPath)
 	ON_COMMAND(ID_BUTTON_RESET_CONFIG, &CWin10LoginPicCollectorDlg::OnButtonResetConfig)
@@ -147,6 +154,31 @@ BOOL CWin10LoginPicCollectorDlg::OnInitDialog()
 	RepositionBars(AFX_IDW_CONTROLBAR_FIRST, AFX_IDW_CONTROLBAR_LAST, 0);
 #pragma endregion
 
+#pragma region Add StatusBar to Dlg
+	// Set the icon for this dialog. 
+	SetIcon(m_hIcon, TRUE);        // Set big icon
+	SetIcon(m_hIcon, FALSE);       // Set small icon
+
+    // Here is what you need, to create a status bar
+	m_StatusBar.Create(this);     //Create status bar
+	m_StatusBar.SetIndicators(indicators, 2);
+
+	// Find the Size of Dialog box
+	CRect rect;
+	GetClientRect(&rect);
+
+	// Size the two panes
+	m_StatusBar.SetPaneInfo(0, ID_INDICATOR_PANE, SBPS_NORMAL, rect.Width() - 60);
+	m_StatusBar.SetPaneInfo(1, ID_INDICATOR_TIME, SBPS_STRETCH, 0);
+
+	// This is where we actually draw it 
+	RepositionBars(AFX_IDW_CONTROLBAR_FIRST, AFX_IDW_CONTROLBAR_LAST, ID_INDICATOR_TIME);
+
+	// Timer is Set to Update the Time on the status Bar.   
+	SetTimer(100, 1000, NULL);
+#pragma endregion
+
+
 	// Load the App settings
 	m_appSettings.LoadConfig();
 
@@ -165,6 +197,12 @@ void CWin10LoginPicCollectorDlg::OnSysCommand(UINT nID, LPARAM lParam)
 {
 	if ((nID & 0xFFF0) == IDM_ABOUTBOX)
 	{
+
+		// Status output
+		CString strStatus;
+		strStatus.Format(L"About Win10LoginPicCollectorDlg");
+		m_StatusBar.SetPaneText(0, strStatus);
+
 		CAboutBox aboutBox;
 		aboutBox.InitParam();
 		aboutBox.DoModal();
@@ -259,6 +297,12 @@ void CWin10LoginPicCollectorDlg::OnButtonEditIni()
 void CWin10LoginPicCollectorDlg::OnButtonAbout()
 {
 	TRACE(_T("OnButtonAbout was pressed\n"));
+
+	// Status output
+	CString strStatus;
+	strStatus.Format(L"About Win10LoginPicCollectorDlg");
+	m_StatusBar.SetPaneText(0, strStatus);
+
 	CAboutBox aboutBox;
 	aboutBox.InitParam();
 	aboutBox.DoModal();
@@ -337,6 +381,21 @@ void CWin10LoginPicCollectorDlg::OnPaint()
 }
 
 /// <summary>
+/// OnTimer
+/// </summary>
+/// <param name="nIDEvent"></param>
+void CWin10LoginPicCollectorDlg::OnTimer(UINT_PTR nIDEvent)
+{
+	if (nIDEvent == 100)
+	{
+		CTime time;
+		time = CTime::GetCurrentTime();
+		m_StatusBar.SetPaneText(1, time.Format("%H:%M:%S"));
+	}
+	CDialogEx::OnTimer(nIDEvent);
+}
+
+/// <summary>
 /// OnClose
 /// </summary>
 void CWin10LoginPicCollectorDlg::OnClose()
@@ -379,6 +438,11 @@ void CWin10LoginPicCollectorDlg::LoadIniFileInNotpad()
 	CString strComand;
 	strComand.Format(L"notepad.exe");
 	ShellExecute(m_hWnd, L"open", strComand, strIniPathFile, NULL, SW_SHOWNORMAL);
+
+	// Status output
+	CString strStatus;
+	strStatus.Format(L"Show and edit the Ini File %s", strHelp);
+	m_StatusBar.SetPaneText(0, strStatus);
 }
 
 /// <summary>
@@ -400,6 +464,11 @@ void CWin10LoginPicCollectorDlg::InitSourceBranch()
 	std::vector<std::wstring> fileNames = CAppSettings::GetAllFilesInDir(strPath);
 	LoadListBox(fileNames);
 	UpdateData(false);
+
+	// Status output
+	CString strStatus;
+	strStatus.Format(L"%i Files in %s", m_iNumFiles, strPath);
+	m_StatusBar.SetPaneText(0, strStatus);
 }
 
 /// <summary>
@@ -415,6 +484,12 @@ void CWin10LoginPicCollectorDlg::InitDestinationBranch()
 	std::vector<std::wstring> fileNames = CAppSettings::GetAllFilesInDir(strPath);
 	LoadListCtrl(fileNames);
 	UpdateData(false);
+
+	// Status output
+	int count = CAppSettings::NumberOfFilesIn(strPath);
+	CString strStatus;
+	strStatus.Format(L"%i Files in %s", count, strPath);
+	m_StatusBar.SetPaneText(0, strStatus);
 }
 
 /// <summary>

@@ -11,6 +11,8 @@
 #define ID_BUTTON_EXIT                  129
 #define IDI_ICON3                       133
 #define IDR_MAINFRAME                   133
+#define ID_INDICATOR_PANE               134
+#define ID_INDICATOR_TIME               135
 #define IDC_STATIC_NUMFILES_TITLE       1000
 #define IDC_STATIC_NUMFILES             1001
 #define IDC_LIST1                       1002
@@ -39,7 +41,7 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        135
+#define _APS_NEXT_RESOURCE_VALUE        136
 #define _APS_NEXT_COMMAND_VALUE         32778
 #define _APS_NEXT_CONTROL_VALUE         1009
 #define _APS_NEXT_SYMED_VALUE           102
