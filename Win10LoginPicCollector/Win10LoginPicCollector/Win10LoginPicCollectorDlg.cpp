@@ -58,7 +58,7 @@ BEGIN_MESSAGE_MAP(CWin10LoginPicCollectorDlg, CDialogEx)
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
 	ON_COMMAND(ID_BUTTON_EXIT, &CWin10LoginPicCollectorDlg::OnButtonExit)
-	ON_COMMAND(ID_BUTTON_SELECT_PATH, &CWin10LoginPicCollectorDlg::OnButtonSelectSourcePath)
+	ON_COMMAND(ID_BUTTON_SELECT_SOURCE_PATH, &CWin10LoginPicCollectorDlg::OnButtonSelectSourcePath)
 	ON_COMMAND(ID_BUTTON_EDIT_INI, &CWin10LoginPicCollectorDlg::OnButtonEditIni)
 	ON_COMMAND(ID_BUTTON_ABOUT, &CWin10LoginPicCollectorDlg::OnButtonAbout)
 	ON_COMMAND(ID_BUTTON_SELECT_DESTINATION_PATH, &CWin10LoginPicCollectorDlg::OnButtonSelectDestinationPath)
@@ -104,7 +104,7 @@ BOOL CWin10LoginPicCollectorDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// Set small icon
 
 	// TODO: Add extra initialization here
-	m_strVersion = L"1.0.0.1";
+	m_strVersion = L"1.0.0.2";
 
 #pragma region Add ToolBar to Dlg
 	// Create the ToolBar
