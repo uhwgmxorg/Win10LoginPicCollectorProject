@@ -104,7 +104,7 @@ BOOL CWin10LoginPicCollectorDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// Set small icon
 
 	// TODO: Add extra initialization here
-	m_strVersion = L"1.0.0.0";
+	m_strVersion = L"1.0.0.1";
 
 #pragma region Add ToolBar to Dlg
 	// Create the ToolBar
