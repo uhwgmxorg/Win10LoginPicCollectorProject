@@ -11,6 +11,9 @@
 #include "Win10LoginPicCollector.h"
 #include "Win10LoginPicCollectorDlg.h"
 
+#define	THUMBNAIL_WIDTH		100
+#define	THUMBNAIL_HEIGHT	90
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -199,6 +202,7 @@ BOOL CWin10LoginPicCollectorDlg::OnInitDialog()
 #pragma endregion
 
 	// Init GDI+
+	// see pch.h
 	GdiplusStartup(&m_gdiplusToken, &m_gdiplusStartupInput, &m_gdiplusStartupOutput);
 
 	InitSourceBranch();
@@ -595,72 +599,80 @@ void CWin10LoginPicCollectorDlg::LoadListBox(std::vector<std::wstring> list)
 /// <param name="list"></param>
 void CWin10LoginPicCollectorDlg::LoadListCtrl(std::vector<std::wstring> list)
 {
-	// Create the image list with 100*100 icons and 32 bpp color depth
 	std::wstring stdstr;
 	COLORREF rgbTransparentColor = 0xFFFFFF;
-	HANDLE hBitMap;
-	CBitmap *pbmp;
 
+	// Delete old items if any
 	m_ctrlDestination.DeleteAllItems();
+	// Delete the ImageList if we have one and initialise it new
 	if (m_pImageListThumb) delete(m_pImageListThumb);
 	m_pImageListThumb = new CImageList();
-	m_pImageListThumb->Create(100, 90, ILC_COLOR32, 0, 1);
+	// Create the ImageList with 100*90 icons and 32 bpp color depth
+	m_pImageListThumb->Create(THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT, ILC_COLOR32, 0, 1);
+	// Link the ImageList to the Control
 	m_ctrlDestination.SetImageList(m_pImageListThumb, LVSIL_NORMAL);
 	m_pImageListThumb->SetImageCount(list.size());
 	m_ctrlDestination.SetRedraw(FALSE);
 
-
+	// Iterate through all files found, load the 
+	// image and paste it into the LstCtrl
 	for (size_t i = 0; i < list.size(); i++)
 	{
 		HBITMAP hbmReturn = NULL;
-		Bitmap* bmPhoto = NULL;
-		CBitmap Bmp1;
+		Bitmap* pbmPhoto = NULL;
+		CBitmap bmp1;
+
+		m_ctrlDestination.InsertItem(i, list.at(i).c_str(), i);
+        stdstr = m_appSettings.m_strDestinationPath + L"\\" + list.at(i);
+		Bitmap image(stdstr.c_str());
+
+		int sourceWidth = image.GetWidth();
+		int sourceHeight = image.GetHeight();
+
+		int destX = 0;
+		int destY = 0;
+
+		float nPercent = 0;
+		float nPercentW = ((float)THUMBNAIL_WIDTH / (float)sourceWidth);;
+		float nPercentH = ((float)THUMBNAIL_HEIGHT / (float)sourceHeight);
+
+		if (nPercentH < nPercentW)
+		{
+			nPercent = nPercentH;
+			destX = (int)((THUMBNAIL_WIDTH - (sourceWidth * nPercent)) / 2);
+		}
+		else
+		{
+			nPercent = nPercentW;
+			destY = (int)((THUMBNAIL_HEIGHT - (sourceHeight * nPercent)) / 2);
+		}
+
+		int destWidth = (int)(sourceWidth * nPercent);
+		int destHeight = (int)(sourceHeight * nPercent);
+
+		// Force the compiler to take global new (also necessary for the delete)
+		pbmPhoto = ::new Bitmap(THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT, PixelFormat24bppRGB);
+		pbmPhoto->SetResolution(image.GetHorizontalResolution(), image.GetVerticalResolution());
+
+		Graphics* grPhoto = Graphics::FromImage(pbmPhoto);
+		Color colorW(255, 255, 255, 255);
+		grPhoto->Clear(colorW);
+		grPhoto->SetInterpolationMode(InterpolationModeHighQualityBicubic);
+		grPhoto->DrawImage(&image, Rect(destX, destY, destWidth, destHeight));
+
+		pbmPhoto->GetHBITMAP(colorW, &hbmReturn);
+
+		bmp1.Attach(hbmReturn);
+		m_pImageListThumb->Replace(i, &bmp1, NULL);
+
+		delete grPhoto;
+		::delete pbmPhoto;  // see ::new above
+		bmp1.Detach();
+		DeleteObject(hbmReturn);
 	}
 
-
-
-	// Create the imgelist
-	for (size_t i = 0; i < list.size(); i++)
-	{
-		stdstr = m_appSettings.m_strDestinationPath + L"\\" + list.at(i);
-		hBitMap = ::LoadImage(0, stdstr.c_str(), IMAGE_BITMAP, 0, 0, LR_DEFAULTCOLOR | LR_CREATEDIBSECTION | LR_LOADFROMFILE);
-		GetAndPrintLastErrorTxt(L"::LoadImage");
-		pbmp = new CBitmap();
-		pbmp->Attach((HBITMAP)hBitMap);
-		m_pImageListThumb->Add(pbmp, rgbTransparentColor);
-		delete(pbmp);
-	}
-
-	// Insert into ListCtrl
-	stdstr = L"";
-	for (size_t i = 0; i < list.size(); i++)
-	{
-		stdstr = list.at(i);
-		CString cstr(stdstr.c_str());
-		InsertItem(cstr,i);
-		GetAndPrintLastErrorTxt(L"::LoadImage");
-	}
-}
-void CWin10LoginPicCollectorDlg::InsertItem(CString strItem,int iImage)
-{
-	LVITEM lvi;
-
-	lvi.mask = LVIF_TEXT | LVIF_IMAGE;
-	lvi.iItem = 0;
-	lvi.iSubItem = 0;
-	lvi.state;
-	lvi.stateMask;
-	lvi.pszText = (LPTSTR)(LPCTSTR)(strItem);
-	lvi.cchTextMax;
-	lvi.iImage = iImage;
-	lvi.lParam;
-	lvi.iIndent;
-	lvi.iGroupId;
-	lvi.cColumns;
-	lvi.puColumns;
-	lvi.piColFmt;
-	lvi.iGroup;
-	m_ctrlDestination.InsertItem(&lvi);
+	m_ctrlDestination.SetRedraw(TRUE);
+	m_ctrlDestination.Invalidate();
 }
 
 /// <summary>

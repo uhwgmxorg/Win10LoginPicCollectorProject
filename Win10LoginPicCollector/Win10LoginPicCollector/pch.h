@@ -12,6 +12,7 @@
 
 // Using GDI+
 // see: https://www.codeproject.com/Articles/3962/Using-GDI-with-MFC-or-native-C-C
+#include <windows.h>
 #include <gdiplus.h>
 using namespace Gdiplus;
 #pragma comment(lib, "gdiplus.lib")
