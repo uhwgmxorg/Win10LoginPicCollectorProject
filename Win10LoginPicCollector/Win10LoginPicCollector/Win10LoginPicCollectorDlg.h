@@ -49,13 +49,15 @@ private:
 	int m_iNumFiles;
 	CListBox m_listBox;
 	CListCtrl m_ctrlDestination;
+	CImageList *m_pImageListThumb;
 
 	void InitSourceBranch();
 	void InitDestinationBranch();
 	void SaveAppSettings();
 	void LoadListBox(std::vector<std::wstring> list);
 	void LoadListCtrl(std::vector<std::wstring> list);
-	void InsertItem(CString strItem);
+	void GetAndPrintLastErrorTxt(std::wstring strFuncName);
+	void InsertItem(CString strItem, int iImage);
 
 public:
 	afx_msg void OnTimer(UINT_PTR nIDEvent);

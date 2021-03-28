@@ -178,6 +178,8 @@ BOOL CWin10LoginPicCollectorDlg::OnInitDialog()
 
 	// Load the App settings
 	m_appSettings.LoadConfig();
+	// Set the window position
+	SetWindowPos(NULL, m_appSettings.m_lLeft, m_appSettings.m_lTop, m_appSettings.m_lRight - m_appSettings.m_lLeft, m_appSettings.m_lBottom - m_appSettings.m_lTop, SWP_SHOWWINDOW | SWP_NOSIZE);
 
 #pragma region Set Version and architecture in Window Text
 	// Set Version and architecture in Window Text
@@ -588,26 +590,78 @@ void CWin10LoginPicCollectorDlg::LoadListBox(std::vector<std::wstring> list)
 /// <param name="list"></param>
 void CWin10LoginPicCollectorDlg::LoadListCtrl(std::vector<std::wstring> list)
 {
-	m_ctrlDestination.DeleteAllItems();
+	// Create the image list with 100*100 icons and 32 bpp color depth
+	std::wstring stdstr;
+	COLORREF rgbTransparentColor = 0xFFFFFF;
+	HANDLE hBitMap;
+	CBitmap *pbmp;
 
-	std::wstring stdstr = L"";
+	m_ctrlDestination.DeleteAllItems();
+	if (m_pImageListThumb) delete(m_pImageListThumb);
+	m_pImageListThumb = new CImageList();
+	m_pImageListThumb->Create(100, 100, ILC_COLOR24, 2, 10);
+
+	// Create the imgelist
+	for (size_t i = 0; i < list.size(); i++)
+	{
+		stdstr = m_appSettings.m_strDestinationPath + L"\\" + list.at(i);
+		hBitMap = ::LoadImage(0, stdstr.c_str(), IMAGE_BITMAP, 0, 0, LR_DEFAULTCOLOR | LR_CREATEDIBSECTION | LR_LOADFROMFILE);
+		GetAndPrintLastErrorTxt(L"::LoadImage");
+		pbmp = new CBitmap();
+		pbmp->Attach((HBITMAP)hBitMap);
+		m_pImageListThumb->Add(pbmp, rgbTransparentColor);
+		//delete(pbmp);
+	}
+
+	m_ctrlDestination.SetImageList(m_pImageListThumb, LVSIL_SMALL);
+
+	// Insert into ListCtrl
+	stdstr = L"";
 	for (size_t i = 0; i < list.size(); i++)
 	{
 		stdstr = list.at(i);
 		CString cstr(stdstr.c_str());
-		InsertItem(cstr);
+		InsertItem(cstr,i);
+		GetAndPrintLastErrorTxt(L"::LoadImage");
 	}
 }
-void CWin10LoginPicCollectorDlg::InsertItem(CString strItem)
+void CWin10LoginPicCollectorDlg::InsertItem(CString strItem,int iImage)
 {
 	LVITEM lvi;
 
-	lvi.mask = LVIF_TEXT;
+	lvi.mask = LVIF_TEXT | LVIF_IMAGE;
 	lvi.iItem = 0;
 	lvi.iSubItem = 0;
+	lvi.state;
+	lvi.stateMask;
 	lvi.pszText = (LPTSTR)(LPCTSTR)(strItem);
-	lvi.iImage = NULL;
+	lvi.cchTextMax;
+	lvi.iImage = iImage;
+	lvi.lParam;
+	lvi.iIndent;
+	lvi.iGroupId;
+	lvi.cColumns;
+	lvi.puColumns;
+	lvi.piColFmt;
+	lvi.iGroup;
 	m_ctrlDestination.InsertItem(&lvi);
+}
+
+/// <summary>
+/// GetAndPrintLastErrorTxt
+/// Print the Last Error (if any) 
+/// as text in the Output
+/// </summary>
+/// <param name="strFuncName"></param>
+void CWin10LoginPicCollectorDlg::GetAndPrintLastErrorTxt(std::wstring strFuncName)
+{
+	DWORD dwerr = GetLastError(); if (!dwerr) return;
+	// Get the last Error in text
+	wchar_t buf[256];
+	FormatMessageW(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+		NULL, dwerr, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+		buf, (sizeof(buf) / sizeof(wchar_t)), NULL);
+	TRACE(_T("Failed on %s LastError %u %s\n"), strFuncName.c_str(), dwerr, buf);
 }
 
 #pragma endregion

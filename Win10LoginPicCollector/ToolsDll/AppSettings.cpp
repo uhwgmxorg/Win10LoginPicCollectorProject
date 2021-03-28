@@ -65,7 +65,6 @@ unsigned int CAppSettings::LoadConfig()
     GetPrivateProfileStringW(L"App", L"DestinationPath", m_strDestinationPath.c_str(), szValue, SZ_VALUE_SIZE, szIniFile);
     m_strDestinationPath = szValue;
 
-
     DWORD dwerr = GetLastError();
     // Get the last Error in text
     wchar_t buf[256];
