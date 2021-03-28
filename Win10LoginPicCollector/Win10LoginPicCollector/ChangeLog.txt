@@ -1,9 +1,11 @@
 Program Win10LoginPicCollector ChangeLog
 
 
-   xx.xx.2021 1.0.0.x
+   28.03.2021 1.0.0.3
 
    - Add ChangeLog.txt
+   - Make Destination ListCtrl working in 
+     principal (display Images if any)
 
 
    23.03.2021 1.0.0.2

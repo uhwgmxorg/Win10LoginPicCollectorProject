@@ -107,7 +107,20 @@ BOOL CWin10LoginPicCollectorDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// Set small icon
 
 	// TODO: Add extra initialization here
-	m_strVersion = L"1.0.0.2";
+	m_strVersion = L"1.0.0.3";
+
+#pragma region Set a Bold Font in Dlg Statics
+	// Get current font.
+	CFont* pFont = GetDlgItem(IDC_STATIC_SOURCE)->GetFont();
+	LOGFONT LogFont = { 0 };
+	pFont->GetLogFont(&LogFont);
+	LogFont.lfWeight = 700;
+	CFont staticFont;
+	staticFont.CreateFontIndirect(&LogFont);
+	// Sets the new font back to static text.
+	GetDlgItem(IDC_STATIC_SOURCE)->SetFont(&staticFont);
+	GetDlgItem(IDC_STATIC_DESTINATION)->SetFont(&staticFont);
+#pragma endregion
 
 #pragma region Add ToolBar to Dlg
 	// Create the ToolBar
@@ -200,6 +213,14 @@ BOOL CWin10LoginPicCollectorDlg::OnInitDialog()
 #endif // DEBUG
 	SetWindowText(strWindowText);
 #pragma endregion
+
+	// Set the LstCtrl Syle
+	DWORD dwStyle = 0x00000000;
+	dwStyle = LVS_REPORT;
+	m_ctrlDestination.ModifyStyle(dwStyle, 0);
+	DWORD dwExStyle = 0x00000000;
+	dwExStyle = LVS_EX_AUTOSIZECOLUMNS;
+	//m_ctrlDestination.SetExtendedStyle(dwExStyle);
 
 	// Init GDI+
 	// see pch.h
