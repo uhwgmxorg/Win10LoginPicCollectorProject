@@ -51,6 +51,11 @@ private:
 	CListCtrl m_ctrlDestination;
 	CImageList *m_pImageListThumb;
 
+	// GDI+
+	GdiplusStartupInput m_gdiplusStartupInput;
+	GdiplusStartupOutput m_gdiplusStartupOutput;
+	ULONG_PTR m_gdiplusToken;
+
 	void InitSourceBranch();
 	void InitDestinationBranch();
 	void SaveAppSettings();

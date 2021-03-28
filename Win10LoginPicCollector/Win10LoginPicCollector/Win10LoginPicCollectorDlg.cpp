@@ -198,6 +198,9 @@ BOOL CWin10LoginPicCollectorDlg::OnInitDialog()
 	SetWindowText(strWindowText);
 #pragma endregion
 
+	// Init GDI+
+	GdiplusStartup(&m_gdiplusToken, &m_gdiplusStartupInput, &m_gdiplusStartupOutput);
+
 	InitSourceBranch();
 	InitDestinationBranch();
 
@@ -475,6 +478,8 @@ BOOL CWin10LoginPicCollectorDlg::OnToolTipText(UINT, NMHDR* pNMHDR, LRESULT* pRe
 /// </summary>
 void CWin10LoginPicCollectorDlg::OnClose()
 {
+	// Shut down GDI+
+	GdiplusShutdown(m_gdiplusToken);
 	SaveAppSettings();
 
 	CDialogEx::OnClose();
@@ -599,7 +604,20 @@ void CWin10LoginPicCollectorDlg::LoadListCtrl(std::vector<std::wstring> list)
 	m_ctrlDestination.DeleteAllItems();
 	if (m_pImageListThumb) delete(m_pImageListThumb);
 	m_pImageListThumb = new CImageList();
-	m_pImageListThumb->Create(100, 100, ILC_COLOR24, 2, 10);
+	m_pImageListThumb->Create(100, 90, ILC_COLOR32, 0, 1);
+	m_ctrlDestination.SetImageList(m_pImageListThumb, LVSIL_NORMAL);
+	m_pImageListThumb->SetImageCount(list.size());
+	m_ctrlDestination.SetRedraw(FALSE);
+
+
+	for (size_t i = 0; i < list.size(); i++)
+	{
+		HBITMAP hbmReturn = NULL;
+		Bitmap* bmPhoto = NULL;
+		CBitmap Bmp1;
+	}
+
+
 
 	// Create the imgelist
 	for (size_t i = 0; i < list.size(); i++)
@@ -610,10 +628,8 @@ void CWin10LoginPicCollectorDlg::LoadListCtrl(std::vector<std::wstring> list)
 		pbmp = new CBitmap();
 		pbmp->Attach((HBITMAP)hBitMap);
 		m_pImageListThumb->Add(pbmp, rgbTransparentColor);
-		//delete(pbmp);
+		delete(pbmp);
 	}
-
-	m_ctrlDestination.SetImageList(m_pImageListThumb, LVSIL_SMALL);
 
 	// Insert into ListCtrl
 	stdstr = L"";

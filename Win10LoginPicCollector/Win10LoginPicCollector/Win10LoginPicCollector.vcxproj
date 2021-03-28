@@ -223,6 +223,9 @@
     <Image Include="res\toolbar2.bmp" />
     <Image Include="res\Win10LoginPicCollector.ico" />
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="ChangeLog.txt" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

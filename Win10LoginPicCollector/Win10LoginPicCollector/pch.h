@@ -10,4 +10,10 @@
 // add headers that you want to pre-compile here
 #include "framework.h"
 
+// Using GDI+
+// see: https://www.codeproject.com/Articles/3962/Using-GDI-with-MFC-or-native-C-C
+#include <gdiplus.h>
+using namespace Gdiplus;
+#pragma comment(lib, "gdiplus.lib")
+
 #endif //PCH_H

@@ -1,0 +1,22 @@
+Program Win10LoginPicCollector ChangeLog
+
+
+   xx.xx.2021 1.0.0.x
+
+   - Add ChangeLog.txt
+
+
+   23.03.2021 1.0.0.2
+
+   - Bug fixing on ID_BUTTON_SELECT_SOURCE_PATH.
+
+
+   23.03.2021 1.0.0.1
+
+   - Add ToolTips
+   - Add StausBar
+
+
+   22.03.2021 1.0.0.0
+
+   - Initial Start
