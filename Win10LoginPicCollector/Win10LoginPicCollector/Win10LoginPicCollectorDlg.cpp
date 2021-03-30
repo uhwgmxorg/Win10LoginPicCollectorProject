@@ -107,7 +107,7 @@ BOOL CWin10LoginPicCollectorDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// Set small icon
 
 	// TODO: Add extra initialization here
-	m_strVersion = L"1.0.0.3";
+	m_strVersion = L"1.0.0.4";
 
 #pragma region Set a Bold Font in Dlg Statics
 	// Get current font.

@@ -1,6 +1,11 @@
 Program Win10LoginPicCollector ChangeLog
 
 
+   30.03.2021 1.0.0.4
+
+   - Adjust Winnow size for 1366 x 768 screens.
+
+
    28.03.2021 1.0.0.3
 
    - Add ChangeLog.txt
