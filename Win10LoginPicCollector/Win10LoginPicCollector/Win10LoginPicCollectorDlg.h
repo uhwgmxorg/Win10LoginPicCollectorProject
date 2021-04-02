@@ -73,4 +73,6 @@ public:
 	afx_msg void OnButtonSelectDestinationPath();
 	afx_msg void OnButtonResetConfig();
 	afx_msg void OnClickedButtonCopy();
+	afx_msg void OnNMClickListctrlDestination(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnNMDblclkListctrlDestination(NMHDR* pNMHDR, LRESULT* pResult);
 };

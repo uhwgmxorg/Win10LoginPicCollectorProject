@@ -71,6 +71,8 @@ BEGIN_MESSAGE_MAP(CWin10LoginPicCollectorDlg, CDialogEx)
 	ON_WM_CLOSE()
 	ON_NOTIFY_EX_RANGE(TTN_NEEDTEXTW, 0, 0xFFFF, OnToolTipText)
 	ON_NOTIFY_EX_RANGE(TTN_NEEDTEXTA, 0, 0xFFFF, OnToolTipText)
+	ON_NOTIFY(NM_CLICK, IDC_LISTCTRL_DESTINATION, &CWin10LoginPicCollectorDlg::OnNMClickListctrlDestination)
+	ON_NOTIFY(NM_DBLCLK, IDC_LISTCTRL_DESTINATION, &CWin10LoginPicCollectorDlg::OnNMDblclkListctrlDestination)
 END_MESSAGE_MAP()
 
 /// <summary>
@@ -499,6 +501,62 @@ BOOL CWin10LoginPicCollectorDlg::OnToolTipText(UINT, NMHDR* pNMHDR, LRESULT* pRe
 }
 
 /// <summary>
+/// OnNMClickListctrlDestination
+/// 
+/// </summary>
+/// <param name="pNMHDR"></param>
+/// <param name="pResult"></param>
+void CWin10LoginPicCollectorDlg::OnNMClickListctrlDestination(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	LPNMITEMACTIVATE pNMItemActivate = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);
+
+	// Zero based index of CListCtrl
+	int itemClicked = pNMItemActivate->iItem;
+	// Buffer for the LVITEM.pszText
+	wchar_t retText[MAX_PATH];
+	ZeroMemory(retText, sizeof(wchar_t));
+
+	LVITEM itemToGet;
+	ZeroMemory(&itemToGet, sizeof(LVITEM));
+
+	// Set the flag to LVIF_TEXT
+	itemToGet.mask = LVIF_TEXT;
+	// Specifies the required item
+	itemToGet.iItem = itemClicked;
+	// Assigns the buffer to pszText member variable
+	itemToGet.pszText = retText;
+	// IMPORTED set also cchTextMax
+	itemToGet.cchTextMax = MAX_PATH;
+	// Call GetItem(...) call
+	BOOL rc = m_ctrlDestination.GetItem(&itemToGet);
+
+	// Cuild file path name
+	std::wstring fileName(itemToGet.pszText);
+	std::wstring path = m_appSettings.m_strDestinationPath;
+	std::wstring filePath = path + L"\\" + fileName;
+
+	// Output of our file path name
+	TRACE(_T("Click on ListCtrl Item %s\n"), filePath.c_str());  
+
+	// Action on file
+	filePath;
+
+	*pResult = 0;
+}
+
+/// <summary>
+/// OnNMDblclkListctrlDestination
+/// </summary>
+/// <param name="pNMHDR"></param>
+/// <param name="pResult"></param>
+void CWin10LoginPicCollectorDlg::OnNMDblclkListctrlDestination(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	LPNMITEMACTIVATE pNMItemActivate = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);
+
+	*pResult = 0;
+}
+
+/// <summary>
 /// OnClose
 /// </summary>
 void CWin10LoginPicCollectorDlg::OnClose()
@@ -643,6 +701,7 @@ void CWin10LoginPicCollectorDlg::LoadListCtrl(std::vector<std::wstring> list)
 		Bitmap* pbmPhoto = NULL;
 		CBitmap bmp1;
 
+		// Insert the item to the CListCtrl
 		m_ctrlDestination.InsertItem(i, list.at(i).c_str(), i);
         stdstr = m_appSettings.m_strDestinationPath + L"\\" + list.at(i);
 		Bitmap image(stdstr.c_str());
