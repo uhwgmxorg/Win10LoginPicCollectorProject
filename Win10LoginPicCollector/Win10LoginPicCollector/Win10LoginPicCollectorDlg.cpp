@@ -500,9 +500,9 @@ BOOL CWin10LoginPicCollectorDlg::OnToolTipText(UINT, NMHDR* pNMHDR, LRESULT* pRe
 	return FALSE;
 }
 
+
 /// <summary>
 /// OnNMClickListctrlDestination
-/// 
 /// </summary>
 /// <param name="pNMHDR"></param>
 /// <param name="pResult"></param>
@@ -536,7 +536,11 @@ void CWin10LoginPicCollectorDlg::OnNMClickListctrlDestination(NMHDR* pNMHDR, LRE
 	std::wstring filePath = path + L"\\" + fileName;
 
 	// Output of our file path name
-	TRACE(_T("Click on ListCtrl Item %s\n"), filePath.c_str());  
+	TRACE(_T("Click on ListCtrl Item %s\n"), filePath.c_str());
+	// Status output
+	CString strStatus;
+	strStatus.Format(L"Click on ListCtrl Item %s\n", filePath.c_str());
+	m_StatusBar.SetPaneText(0, strStatus);
 
 	// Action on file
 	filePath;
@@ -552,6 +556,14 @@ void CWin10LoginPicCollectorDlg::OnNMClickListctrlDestination(NMHDR* pNMHDR, LRE
 void CWin10LoginPicCollectorDlg::OnNMDblclkListctrlDestination(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	LPNMITEMACTIVATE pNMItemActivate = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);
+
+	// Zero based index of CListCtrl
+	int itemClicked = pNMItemActivate->iItem;
+
+	// Status output
+	CString strStatus;
+	strStatus.Format(L"DBClick on ListCtrl Item %i\n", itemClicked);
+	m_StatusBar.SetPaneText(0, strStatus);
 
 	*pResult = 0;
 }
