@@ -109,7 +109,7 @@ BOOL CWin10LoginPicCollectorDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// Set small icon
 
 	// TODO: Add extra initialization here
-	m_strVersion = L"1.0.0.4";
+	m_strVersion = L"1.0.0.5";
 
 #pragma region Set a Bold Font in Dlg Statics
 	// Get current font.
@@ -307,7 +307,7 @@ void CWin10LoginPicCollectorDlg::OnButtonSelectDestinationPath()
 {
 	TRACE(_T("OnButtonSelectDestinationPath was pressed\n"));
 
-	std::wstring strPath = CToolsDllApp::GetPath(m_appSettings.m_strDestinationPath.c_str());
+	wstring strPath = CToolsDllApp::GetPath(m_appSettings.m_strDestinationPath.c_str());
 	TRACE(_T("GetPath() = %s\n"), strPath.c_str());
 	m_appSettings.m_strDestinationPath = strPath;
 	m_appSettings.SaveConfig();
@@ -368,7 +368,7 @@ void CWin10LoginPicCollectorDlg::OnClickedButtonCopy()
 {
 	TRACE(_T("OnClickedButtonCopy was pressed\n"));
 
-	CToolsDllApp::CopyFile((m_appSettings.m_strSourcePath).c_str(), m_appSettings.m_strDestinationPath.c_str());
+	CToolsDllApp::CopyFiles((m_appSettings.m_strSourcePath).c_str(), m_appSettings.m_strDestinationPath.c_str());
 	InitDestinationBranch();
 }
 
@@ -531,9 +531,9 @@ void CWin10LoginPicCollectorDlg::OnNMClickListctrlDestination(NMHDR* pNMHDR, LRE
 	BOOL rc = m_ctrlDestination.GetItem(&itemToGet);
 
 	// Cuild file path name
-	std::wstring fileName(itemToGet.pszText);
-	std::wstring path = m_appSettings.m_strDestinationPath;
-	std::wstring filePath = path + L"\\" + fileName;
+	wstring fileName(itemToGet.pszText);
+	wstring path = m_appSettings.m_strDestinationPath;
+	wstring filePath = path + L"\\" + fileName;
 
 	// Output of our file path name
 	TRACE(_T("Click on ListCtrl Item %s\n"), filePath.c_str());
@@ -626,7 +626,7 @@ void CWin10LoginPicCollectorDlg::LoadIniFileInNotpad()
 void CWin10LoginPicCollectorDlg::InitSourceBranch()
 {
 	CString strPath(m_appSettings.m_strSourcePath.c_str());
-	strPath += L"\\*.*";
+	strPath += L"*.*";
 
 	// Replace the %USERNAME% with the real username if containing
 	if (strPath.Find(L"%USERNAME%") != -1)
@@ -636,7 +636,7 @@ void CWin10LoginPicCollectorDlg::InitSourceBranch()
 	CString strHelp(m_appSettings.m_strSourcePath.c_str());
 	m_strSourcePath = strHelp;
 
-	std::vector<std::wstring> fileNames = CToolsDllApp::GetAllFilesInDir(strPath);
+	vector<wstring> fileNames = CToolsDllApp::GetAllFilesInDir(strPath);
 	LoadListBox(fileNames);
 	UpdateData(false);
 
@@ -652,11 +652,11 @@ void CWin10LoginPicCollectorDlg::InitSourceBranch()
 void CWin10LoginPicCollectorDlg::InitDestinationBranch()
 {
 	CString strPath(m_appSettings.m_strDestinationPath.c_str());
-	strPath += L"\\*.*";
+	strPath += L"*.*";
 	CString strHelp(m_appSettings.m_strDestinationPath.c_str());
 	m_strDestinationPath = strHelp;
 
-	std::vector<std::wstring> fileNames = CToolsDllApp::GetAllFilesInDir(strPath);
+	vector<wstring> fileNames = CToolsDllApp::GetAllFilesInDir(strPath);
 	LoadListCtrl(fileNames);
 	UpdateData(false);
 
@@ -671,11 +671,11 @@ void CWin10LoginPicCollectorDlg::InitDestinationBranch()
 /// LoadListBox
 /// </summary>
 /// <param name="list"></param>
-void CWin10LoginPicCollectorDlg::LoadListBox(std::vector<std::wstring> list)
+void CWin10LoginPicCollectorDlg::LoadListBox(vector<wstring> list)
 {
 	m_listBox.ResetContent();
 	
-	std::wstring stdstr = L"";
+	wstring stdstr = L"";
 	for (size_t i = 0; i < list.size(); i++) 
 	{
 		stdstr = list.at(i);
@@ -686,11 +686,14 @@ void CWin10LoginPicCollectorDlg::LoadListBox(std::vector<std::wstring> list)
 
 /// <summary>
 /// LoadListCtrl
+/// This function loads the images with their properties 
+/// and adds reduced images in the Image-List assigned to 
+/// the ListCtr.
 /// </summary>
 /// <param name="list"></param>
-void CWin10LoginPicCollectorDlg::LoadListCtrl(std::vector<std::wstring> list)
+void CWin10LoginPicCollectorDlg::LoadListCtrl(vector<wstring> list)
 {
-	std::wstring stdstr;
+	wstring stdstr;
 	COLORREF rgbTransparentColor = 0xFFFFFF;
 
 	// Delete old items if any
@@ -773,7 +776,7 @@ void CWin10LoginPicCollectorDlg::LoadListCtrl(std::vector<std::wstring> list)
 /// as text in the Output
 /// </summary>
 /// <param name="strFuncName"></param>
-void CWin10LoginPicCollectorDlg::GetAndPrintLastErrorTxt(std::wstring strFuncName)
+void CWin10LoginPicCollectorDlg::GetAndPrintLastErrorTxt(wstring strFuncName)
 {
 	DWORD dwerr = GetLastError(); if (!dwerr) return;
 	// Get the last Error in text

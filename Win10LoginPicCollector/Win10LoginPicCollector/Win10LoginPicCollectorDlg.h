@@ -7,6 +7,8 @@
 #include "..\ToolsDll\AppSettings.h"
 #include "..\ToolsDll\ToolsDll.h"
 
+
+
 // CWin10LoginPicCollectorDlg dialog
 class CWin10LoginPicCollectorDlg : public CDialogEx
 {
