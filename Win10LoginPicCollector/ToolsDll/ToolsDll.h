@@ -4,6 +4,9 @@
 #pragma once
 
 #include <string>
+#include <vector>
+
+using namespace std;
 
 #ifndef __AFXWIN_H__
 	#error "'pch.h' vor dieser Datei für PCH einschließen"
@@ -28,5 +31,12 @@ public:
 	DECLARE_MESSAGE_MAP()
 
 public:
-	static std::wstring GetExePath();
+	static bool FileExsist(const wchar_t* lpszFilename);
+	static bool CreateDir(const wchar_t* lpszFilename);
+	static wstring GetExePath();
+	static int NumberOfFilesIn(const wchar_t* lpszPath);
+	static vector<wstring> GetAllFilesInDir(const wchar_t* lpszPath);
+	static wstring GetPath(const wchar_t* lpszPath = NULL);
+	static wstring GetMyUserName();
+	static void CopyFile(const wchar_t* lpszSourceFile, const wchar_t* lpszDestinationFile);
 };

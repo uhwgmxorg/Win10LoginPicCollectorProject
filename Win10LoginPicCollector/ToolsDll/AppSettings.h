@@ -5,6 +5,8 @@
 
 #define SZ_VALUE_SIZE 300
 
+using namespace std;
+
 class AFX_EXT_CLASS CAppSettings
 {
 public:
@@ -16,14 +18,14 @@ public:
     static long m_lBottom;
 
     // [App] section
-    static std::wstring m_strSourcePath;
-    static std::wstring m_strDestinationPath;
+    static wstring m_strSourcePath;
+    static wstring m_strDestinationPath;
 
 private:
     // Other member vars
-    static std::wstring m_strIniFlileName;
-    static std::wstring m_strSourcePathIni;
-    static std::wstring m_strDestinationPathIni;
+    static wstring m_strIniFlileName;
+    static wstring m_strSourcePathIni;
+    static wstring m_strDestinationPathIni;
 
 public:
     CAppSettings();
@@ -31,14 +33,6 @@ public:
     ~CAppSettings();
     static unsigned int LoadConfig();
     static unsigned int SaveConfig();
-
-    static bool FileExsist(const wchar_t* lpszFilename);
-    static bool CreateDir(const wchar_t* lpszFilename);
     static void ResetIniFile();
-    static int NumberOfFilesIn(const wchar_t* lpszPath);
-    static std::vector<std::wstring> GetAllFilesInDir(const wchar_t* lpszPath);
-    static std::wstring GetPath(const wchar_t* lpszPath = NULL);
-    static std::wstring GetMyUserName();
-    static void CopyFile(const wchar_t* lpszSourceFile, const wchar_t* lpszDestinationFile);
 };
 

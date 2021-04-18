@@ -292,7 +292,7 @@ void CWin10LoginPicCollectorDlg::OnButtonSelectSourcePath()
 {
 	TRACE(_T("OnButtonSelectSourcePath was pressed\n"));
 
-	std::wstring strPath = CAppSettings::GetPath(m_appSettings.m_strSourcePath.c_str());
+	wstring strPath = CToolsDllApp::GetPath(m_appSettings.m_strSourcePath.c_str());
 	TRACE(_T("GetPath() = %s\n"), strPath.c_str());
 	m_appSettings.m_strSourcePath = strPath;
 	m_appSettings.SaveConfig();
@@ -307,7 +307,7 @@ void CWin10LoginPicCollectorDlg::OnButtonSelectDestinationPath()
 {
 	TRACE(_T("OnButtonSelectDestinationPath was pressed\n"));
 
-	std::wstring strPath = CAppSettings::GetPath(m_appSettings.m_strDestinationPath.c_str());
+	std::wstring strPath = CToolsDllApp::GetPath(m_appSettings.m_strDestinationPath.c_str());
 	TRACE(_T("GetPath() = %s\n"), strPath.c_str());
 	m_appSettings.m_strDestinationPath = strPath;
 	m_appSettings.SaveConfig();
@@ -368,7 +368,7 @@ void CWin10LoginPicCollectorDlg::OnClickedButtonCopy()
 {
 	TRACE(_T("OnClickedButtonCopy was pressed\n"));
 
-	m_appSettings.CopyFile((m_appSettings.m_strSourcePath).c_str(), m_appSettings.m_strDestinationPath.c_str());
+	CToolsDllApp::CopyFile((m_appSettings.m_strSourcePath).c_str(), m_appSettings.m_strDestinationPath.c_str());
 	InitDestinationBranch();
 }
 
@@ -630,13 +630,13 @@ void CWin10LoginPicCollectorDlg::InitSourceBranch()
 
 	// Replace the %USERNAME% with the real username if containing
 	if (strPath.Find(L"%USERNAME%") != -1)
-		strPath.Replace(L"%USERNAME%", CAppSettings::GetMyUserName().c_str());
+		strPath.Replace(L"%USERNAME%", CToolsDllApp::GetMyUserName().c_str());
 
-	m_iNumFiles = CAppSettings::NumberOfFilesIn(strPath);
+	m_iNumFiles = CToolsDllApp::NumberOfFilesIn(strPath);
 	CString strHelp(m_appSettings.m_strSourcePath.c_str());
 	m_strSourcePath = strHelp;
 
-	std::vector<std::wstring> fileNames = CAppSettings::GetAllFilesInDir(strPath);
+	std::vector<std::wstring> fileNames = CToolsDllApp::GetAllFilesInDir(strPath);
 	LoadListBox(fileNames);
 	UpdateData(false);
 
@@ -656,12 +656,12 @@ void CWin10LoginPicCollectorDlg::InitDestinationBranch()
 	CString strHelp(m_appSettings.m_strDestinationPath.c_str());
 	m_strDestinationPath = strHelp;
 
-	std::vector<std::wstring> fileNames = CAppSettings::GetAllFilesInDir(strPath);
+	std::vector<std::wstring> fileNames = CToolsDllApp::GetAllFilesInDir(strPath);
 	LoadListCtrl(fileNames);
 	UpdateData(false);
 
 	// Status output
-	int count = CAppSettings::NumberOfFilesIn(strPath);
+	int count = CToolsDllApp::NumberOfFilesIn(strPath);
 	CString strStatus;
 	strStatus.Format(L"%i Files in %s", count, strPath);
 	m_StatusBar.SetPaneText(0, strStatus);
