@@ -7,13 +7,13 @@ long CAppSettings::m_lTop = 10;
 long CAppSettings::m_lRight = 410;
 long CAppSettings::m_lBottom = 210;
 
-std::wstring CAppSettings::m_strSourcePath = L"C:\\Users\\%USERNAME%\\AppData\\Local\\Packages\\Microsoft.Windows.ContentDeliveryManager_cw5n1h2txyewy\\LocalState\\Assets";
-std::wstring CAppSettings::m_strDestinationPath = L"C:\\DestinationPath";
+wstring CAppSettings::m_strSourcePath = L"C:\\Users\\%USERNAME%\\AppData\\Local\\Packages\\Microsoft.Windows.ContentDeliveryManager_cw5n1h2txyewy\\LocalState\\Assets";
+wstring CAppSettings::m_strDestinationPath = L"C:\\DestinationPath";
 
 // Initial values
-std::wstring CAppSettings::m_strIniFlileName = L"Win10LoginPicCollector.ini";
-std::wstring CAppSettings::m_strSourcePathIni = L"C:\\Users\\%USERNAME%\\AppData\\Local\\Packages\\Microsoft.Windows.ContentDeliveryManager_cw5n1h2txyewy\\LocalState\\Assets";
-std::wstring CAppSettings::m_strDestinationPathIni = L"C:\\DestinationPath";
+wstring CAppSettings::m_strIniFlileName = L"Win10LoginPicCollector.ini";
+wstring CAppSettings::m_strSourcePathIni = L"C:\\Users\\%USERNAME%\\AppData\\Local\\Packages\\Microsoft.Windows.ContentDeliveryManager_cw5n1h2txyewy\\LocalState\\Assets";
+wstring CAppSettings::m_strDestinationPathIni = L"C:\\DestinationPath";
 
 /// <summary>
 /// Constructor
@@ -27,7 +27,7 @@ CAppSettings::CAppSettings()
 /// Constructor
 /// </summary>
 /// <param name="intFile"></param>
-CAppSettings::CAppSettings(std::wstring intFile)
+CAppSettings::CAppSettings(wstring intFile)
 {
     m_strIniFlileName = intFile;
     LoadConfig();
@@ -47,7 +47,7 @@ CAppSettings::~CAppSettings()
 /// <returns>lastError the last Win 32 Error</returns>
 unsigned int CAppSettings::LoadConfig()
 {
-    std::wstring exe_path(CToolsDllApp::GetExePath() + L"\\");
+    wstring exe_path(CToolsDllApp::GetExePath() + L"\\");
     wchar_t szValue[SZ_VALUE_SIZE];
     wchar_t szIniFile[MAX_PATH];
     wcscpy_s(szIniFile, (exe_path + m_strIniFlileName).c_str());
@@ -87,7 +87,7 @@ unsigned int CAppSettings::LoadConfig()
 unsigned int CAppSettings::SaveConfig()
 {
     bool flag;
-    std::wstring exe_path(CToolsDllApp::GetExePath() + L"\\");
+    wstring exe_path(CToolsDllApp::GetExePath() + L"\\");
     wchar_t szValue[SZ_VALUE_SIZE];
     wchar_t szIniFile[MAX_PATH];
     wcscpy_s(szIniFile, (exe_path + m_strIniFlileName).c_str());

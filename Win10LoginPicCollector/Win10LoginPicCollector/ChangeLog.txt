@@ -1,6 +1,11 @@
 Program Win10LoginPicCollector ChangeLog
 
 
+   xx.04.2021 1.0.0.6
+
+   - "\\" Bug
+
+
    18.04.2021 1.0.0.5
 
    - Conditional copying of the images

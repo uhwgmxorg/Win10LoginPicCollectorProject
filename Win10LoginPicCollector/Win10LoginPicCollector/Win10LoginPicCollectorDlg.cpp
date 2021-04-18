@@ -109,7 +109,7 @@ BOOL CWin10LoginPicCollectorDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// Set small icon
 
 	// TODO: Add extra initialization here
-	m_strVersion = L"1.0.0.5";
+	m_strVersion = L"1.0.0.6";
 
 #pragma region Set a Bold Font in Dlg Statics
 	// Get current font.
@@ -367,8 +367,7 @@ void CWin10LoginPicCollectorDlg::OnButtonAbout()
 void CWin10LoginPicCollectorDlg::OnClickedButtonCopy()
 {
 	TRACE(_T("OnClickedButtonCopy was pressed\n"));
-
-	CToolsDllApp::CopyFiles((m_appSettings.m_strSourcePath).c_str(), m_appSettings.m_strDestinationPath.c_str());
+	CToolsDllApp::CopyFiles(m_appSettings.m_strSourcePath.c_str(), (m_appSettings.m_strDestinationPath + L"\\").c_str());
 	InitDestinationBranch();
 }
 
@@ -626,7 +625,7 @@ void CWin10LoginPicCollectorDlg::LoadIniFileInNotpad()
 void CWin10LoginPicCollectorDlg::InitSourceBranch()
 {
 	CString strPath(m_appSettings.m_strSourcePath.c_str());
-	strPath += L"*.*";
+	strPath += L"\\*.*";
 
 	// Replace the %USERNAME% with the real username if containing
 	if (strPath.Find(L"%USERNAME%") != -1)
@@ -652,7 +651,7 @@ void CWin10LoginPicCollectorDlg::InitSourceBranch()
 void CWin10LoginPicCollectorDlg::InitDestinationBranch()
 {
 	CString strPath(m_appSettings.m_strDestinationPath.c_str());
-	strPath += L"*.*";
+	strPath += L"\\*.*";
 	CString strHelp(m_appSettings.m_strDestinationPath.c_str());
 	m_strDestinationPath = strHelp;
 
