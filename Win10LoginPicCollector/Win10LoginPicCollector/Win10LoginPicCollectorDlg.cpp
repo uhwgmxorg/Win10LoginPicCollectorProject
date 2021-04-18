@@ -71,6 +71,8 @@ BEGIN_MESSAGE_MAP(CWin10LoginPicCollectorDlg, CDialogEx)
 	ON_WM_CLOSE()
 	ON_NOTIFY_EX_RANGE(TTN_NEEDTEXTW, 0, 0xFFFF, OnToolTipText)
 	ON_NOTIFY_EX_RANGE(TTN_NEEDTEXTA, 0, 0xFFFF, OnToolTipText)
+	ON_NOTIFY(NM_CLICK, IDC_LISTCTRL_DESTINATION, &CWin10LoginPicCollectorDlg::OnNMClickListctrlDestination)
+	ON_NOTIFY(NM_DBLCLK, IDC_LISTCTRL_DESTINATION, &CWin10LoginPicCollectorDlg::OnNMDblclkListctrlDestination)
 END_MESSAGE_MAP()
 
 /// <summary>
@@ -107,7 +109,7 @@ BOOL CWin10LoginPicCollectorDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// Set small icon
 
 	// TODO: Add extra initialization here
-	m_strVersion = L"1.0.0.3";
+	m_strVersion = L"1.0.0.4";
 
 #pragma region Set a Bold Font in Dlg Statics
 	// Get current font.
@@ -290,7 +292,7 @@ void CWin10LoginPicCollectorDlg::OnButtonSelectSourcePath()
 {
 	TRACE(_T("OnButtonSelectSourcePath was pressed\n"));
 
-	std::wstring strPath = CAppSettings::GetPath(m_appSettings.m_strSourcePath.c_str());
+	wstring strPath = CToolsDllApp::GetPath(m_appSettings.m_strSourcePath.c_str());
 	TRACE(_T("GetPath() = %s\n"), strPath.c_str());
 	m_appSettings.m_strSourcePath = strPath;
 	m_appSettings.SaveConfig();
@@ -305,7 +307,7 @@ void CWin10LoginPicCollectorDlg::OnButtonSelectDestinationPath()
 {
 	TRACE(_T("OnButtonSelectDestinationPath was pressed\n"));
 
-	std::wstring strPath = CAppSettings::GetPath(m_appSettings.m_strDestinationPath.c_str());
+	std::wstring strPath = CToolsDllApp::GetPath(m_appSettings.m_strDestinationPath.c_str());
 	TRACE(_T("GetPath() = %s\n"), strPath.c_str());
 	m_appSettings.m_strDestinationPath = strPath;
 	m_appSettings.SaveConfig();
@@ -366,7 +368,7 @@ void CWin10LoginPicCollectorDlg::OnClickedButtonCopy()
 {
 	TRACE(_T("OnClickedButtonCopy was pressed\n"));
 
-	m_appSettings.CopyFile((m_appSettings.m_strSourcePath).c_str(), m_appSettings.m_strDestinationPath.c_str());
+	CToolsDllApp::CopyFile((m_appSettings.m_strSourcePath).c_str(), m_appSettings.m_strDestinationPath.c_str());
 	InitDestinationBranch();
 }
 
@@ -498,6 +500,74 @@ BOOL CWin10LoginPicCollectorDlg::OnToolTipText(UINT, NMHDR* pNMHDR, LRESULT* pRe
 	return FALSE;
 }
 
+
+/// <summary>
+/// OnNMClickListctrlDestination
+/// </summary>
+/// <param name="pNMHDR"></param>
+/// <param name="pResult"></param>
+void CWin10LoginPicCollectorDlg::OnNMClickListctrlDestination(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	LPNMITEMACTIVATE pNMItemActivate = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);
+
+	// Zero based index of CListCtrl
+	int itemClicked = pNMItemActivate->iItem;
+	// Buffer for the LVITEM.pszText
+	wchar_t retText[MAX_PATH];
+	ZeroMemory(retText, sizeof(wchar_t));
+
+	LVITEM itemToGet;
+	ZeroMemory(&itemToGet, sizeof(LVITEM));
+
+	// Set the flag to LVIF_TEXT
+	itemToGet.mask = LVIF_TEXT;
+	// Specifies the required item
+	itemToGet.iItem = itemClicked;
+	// Assigns the buffer to pszText member variable
+	itemToGet.pszText = retText;
+	// IMPORTED set also cchTextMax
+	itemToGet.cchTextMax = MAX_PATH;
+	// Call GetItem(...) call
+	BOOL rc = m_ctrlDestination.GetItem(&itemToGet);
+
+	// Cuild file path name
+	std::wstring fileName(itemToGet.pszText);
+	std::wstring path = m_appSettings.m_strDestinationPath;
+	std::wstring filePath = path + L"\\" + fileName;
+
+	// Output of our file path name
+	TRACE(_T("Click on ListCtrl Item %s\n"), filePath.c_str());
+	// Status output
+	CString strStatus;
+	strStatus.Format(L"Click on ListCtrl Item %s\n", filePath.c_str());
+	m_StatusBar.SetPaneText(0, strStatus);
+
+	// Action on file
+	filePath;
+
+	*pResult = 0;
+}
+
+/// <summary>
+/// OnNMDblclkListctrlDestination
+/// </summary>
+/// <param name="pNMHDR"></param>
+/// <param name="pResult"></param>
+void CWin10LoginPicCollectorDlg::OnNMDblclkListctrlDestination(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	LPNMITEMACTIVATE pNMItemActivate = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);
+
+	// Zero based index of CListCtrl
+	int itemClicked = pNMItemActivate->iItem;
+
+	// Status output
+	CString strStatus;
+	strStatus.Format(L"DBClick on ListCtrl Item %i\n", itemClicked);
+	m_StatusBar.SetPaneText(0, strStatus);
+
+	*pResult = 0;
+}
+
 /// <summary>
 /// OnClose
 /// </summary>
@@ -560,13 +630,13 @@ void CWin10LoginPicCollectorDlg::InitSourceBranch()
 
 	// Replace the %USERNAME% with the real username if containing
 	if (strPath.Find(L"%USERNAME%") != -1)
-		strPath.Replace(L"%USERNAME%", CAppSettings::GetMyUserName().c_str());
+		strPath.Replace(L"%USERNAME%", CToolsDllApp::GetMyUserName().c_str());
 
-	m_iNumFiles = CAppSettings::NumberOfFilesIn(strPath);
+	m_iNumFiles = CToolsDllApp::NumberOfFilesIn(strPath);
 	CString strHelp(m_appSettings.m_strSourcePath.c_str());
 	m_strSourcePath = strHelp;
 
-	std::vector<std::wstring> fileNames = CAppSettings::GetAllFilesInDir(strPath);
+	std::vector<std::wstring> fileNames = CToolsDllApp::GetAllFilesInDir(strPath);
 	LoadListBox(fileNames);
 	UpdateData(false);
 
@@ -586,12 +656,12 @@ void CWin10LoginPicCollectorDlg::InitDestinationBranch()
 	CString strHelp(m_appSettings.m_strDestinationPath.c_str());
 	m_strDestinationPath = strHelp;
 
-	std::vector<std::wstring> fileNames = CAppSettings::GetAllFilesInDir(strPath);
+	std::vector<std::wstring> fileNames = CToolsDllApp::GetAllFilesInDir(strPath);
 	LoadListCtrl(fileNames);
 	UpdateData(false);
 
 	// Status output
-	int count = CAppSettings::NumberOfFilesIn(strPath);
+	int count = CToolsDllApp::NumberOfFilesIn(strPath);
 	CString strStatus;
 	strStatus.Format(L"%i Files in %s", count, strPath);
 	m_StatusBar.SetPaneText(0, strStatus);
@@ -643,6 +713,7 @@ void CWin10LoginPicCollectorDlg::LoadListCtrl(std::vector<std::wstring> list)
 		Bitmap* pbmPhoto = NULL;
 		CBitmap bmp1;
 
+		// Insert the item to the CListCtrl
 		m_ctrlDestination.InsertItem(i, list.at(i).c_str(), i);
         stdstr = m_appSettings.m_strDestinationPath + L"\\" + list.at(i);
 		Bitmap image(stdstr.c_str());

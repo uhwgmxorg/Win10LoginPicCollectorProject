@@ -14,7 +14,7 @@ IMPLEMENT_DYNAMIC(CAboutBox, CDialogEx)
 CAboutBox::CAboutBox(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_ABOUTBOX, pParent)
 {
-	m_strVersion = "1.0.0.3";
+	m_strVersion = "1.0.0.4";
 }
 
 CAboutBox::~CAboutBox()
