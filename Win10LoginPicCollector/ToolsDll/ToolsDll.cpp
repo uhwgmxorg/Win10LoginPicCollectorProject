@@ -7,6 +7,12 @@
 
 #include <filesystem>
 
+// please refer: 
+// https://github.com/nothings/stb
+#define STBI_WINDOWS_UTF8
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -93,9 +99,9 @@ wstring CToolsDllApp::GetExePath()
 	wchar_t path[MAX_PATH] = { 0 };
 	GetModuleFileNameW(NULL, path, MAX_PATH);
 
-	std::filesystem::path exe_path(path);
+	filesystem::path exe_path(path);
 
-	return std::wstring(exe_path.parent_path());
+	return wstring(exe_path.parent_path());
 }
 
 /// <summary>
@@ -156,8 +162,8 @@ int CToolsDllApp::NumberOfFilesIn(const wchar_t* lpszPath)
 /// <param name="lpszPath"></param>
 vector<wstring> CToolsDllApp::GetAllFilesInDir(const wchar_t* lpszPath)
 {
-    std::vector<std::wstring> fileNames;
-    std::wstring search_path = L"*.";
+    vector<wstring> fileNames;
+    wstring search_path = L"*.";
     WIN32_FIND_DATA fd;
     HANDLE hFind = ::FindFirstFileW(lpszPath, &fd);
     if (hFind != INVALID_HANDLE_VALUE) {
@@ -166,8 +172,8 @@ vector<wstring> CToolsDllApp::GetAllFilesInDir(const wchar_t* lpszPath)
             // , delete '!' read other 2 default folder . and ..
             if (!(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
             {
-                std::wstring ws(fd.cFileName);
-                std::wstring str(ws.begin(), ws.end());
+                wstring ws(fd.cFileName);
+                wstring str(ws.begin(), ws.end());
                 fileNames.push_back(str);
             }
         } while (::FindNextFile(hFind, &fd));
@@ -199,7 +205,7 @@ wstring CToolsDllApp::GetPath(const wchar_t* lpszPath)
     delete pdlgPickFolder;
 
 
-    std::wstring strPath((LPCTSTR)cstrPath);
+    wstring strPath((LPCTSTR)cstrPath);
 
     // Just for debuging
     //::MessageBox(NULL, L"The selected path is: " + cstrPath, L"For Debuging", MB_OK);
@@ -217,7 +223,7 @@ wstring CToolsDllApp::GetMyUserName()
     DWORD username_len = UNLEN + 1;
     GetUserNameW(username, &username_len);
 
-    return std::wstring(username);
+    return wstring(username);
 }
 
 /// <summary>
@@ -225,33 +231,55 @@ wstring CToolsDllApp::GetMyUserName()
 /// </summary>
 /// <param name="lpszSourceFile"></param>
 /// <param name="lpszDestinationFile"></param>
-void CToolsDllApp::CopyFile(const wchar_t* lpszSourceFile, const wchar_t* lpszDestinationFile)
+void CToolsDllApp::CopyFiles(const wchar_t* lpszSourceFile, const wchar_t* lpszDestinationFile)
 {
     TRACE(_T("Copy files from %s to %s\n"), lpszSourceFile, lpszDestinationFile);
 
-    std::wstring path_file(lpszSourceFile);
+    wstring path_file(lpszSourceFile);
     // Replace the %USERNAME% with the real username if containing
     if (path_file.find(L"%USERNAME%") != -1)
         path_file.replace(path_file.find(L"%USERNAME%"), wcslen(L"%USERNAME%"), CToolsDllApp::GetMyUserName().c_str());
 
-    std::vector<std::wstring> files = GetAllFilesInDir((path_file + L"\\*.*").c_str());
-    std::wstring s_path = path_file;
-    std::wstring d_path(lpszDestinationFile);
-    std::wstring s_file;
-    std::wstring d_file;
+    vector<wstring> files = GetAllFilesInDir((path_file + L"\\*.*").c_str());
+    wstring s_path = path_file;
+    wstring d_path(lpszDestinationFile);
+    wstring s_file;
+    wstring d_file;
 
     for (auto const& file : files)
     {
-        s_file = s_path + L"\\" + file;
-        d_file = d_path + L"\\" + file + L".jpg";
-        ::CopyFile(s_file.c_str(), d_file.c_str(), FALSE);
+        s_file = s_path + file;
+        d_file = d_path + file + L".jpg";
 
-        DWORD dwerr = GetLastError();
-        // Get the last Error in text
-        wchar_t buf[256];
-        FormatMessageW(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
-            NULL, dwerr, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-            buf, (sizeof(buf) / sizeof(wchar_t)), NULL);
-        TRACE(_T("Failed on ::CopyFile LastError LastError %u %s\n"), dwerr, buf);
+#pragma region stb_image.h action 
+        // This section opens the image with stb_image.h 
+        // and loads the properties of the image
+        char szImageFileName[FILENAME_MAX];
+        int width, height, channels;
+        stbi_set_flip_vertically_on_load(true);
+        WideCharToMultiByte(CP_UTF8, 0, s_file.c_str(), -1, szImageFileName, FILENAME_MAX, NULL, NULL);
+        unsigned char* image = stbi_load(szImageFileName, &width, &height, &channels, STBI_rgb);
+        stbi_image_free(image);
+#pragma endregion
+
+        bool copyImage = false;
+
+        // Only copy images in landscape format and with a
+        // resolution greater or equal than 1920 X 1080
+        if (width >= height && width >= 1920 && height >= 1080)
+            copyImage = true;
+
+        if (copyImage)
+        {
+            ::CopyFile(s_file.c_str(), d_file.c_str(), FALSE);
+
+            DWORD dwerr = GetLastError();
+            // Get the last Error in text
+            wchar_t buf[256];
+            FormatMessageW(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+                NULL, dwerr, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+                buf, (sizeof(buf) / sizeof(wchar_t)), NULL);
+            TRACE(_T("LastError on ::CopyFile LastError: %u %s\n"), dwerr, buf);
+        }
     }
 }

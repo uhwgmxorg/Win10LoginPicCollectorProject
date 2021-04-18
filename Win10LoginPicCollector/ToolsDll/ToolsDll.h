@@ -38,5 +38,5 @@ public:
 	static vector<wstring> GetAllFilesInDir(const wchar_t* lpszPath);
 	static wstring GetPath(const wchar_t* lpszPath = NULL);
 	static wstring GetMyUserName();
-	static void CopyFile(const wchar_t* lpszSourceFile, const wchar_t* lpszDestinationFile);
+	static void CopyFiles(const wchar_t* lpszSourceFile, const wchar_t* lpszDestinationFile);
 };
