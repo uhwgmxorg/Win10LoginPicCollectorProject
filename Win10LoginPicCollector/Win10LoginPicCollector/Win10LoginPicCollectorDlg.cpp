@@ -367,7 +367,12 @@ void CWin10LoginPicCollectorDlg::OnButtonAbout()
 void CWin10LoginPicCollectorDlg::OnClickedButtonCopy()
 {
 	TRACE(_T("OnClickedButtonCopy was pressed\n"));
-	CToolsDllApp::CopyFiles(m_appSettings.m_strSourcePath.c_str(), (m_appSettings.m_strDestinationPath + L"\\").c_str());
+	CString strSPath = m_appSettings.m_strSourcePath.c_str();
+	CString strDPath = m_appSettings.m_strDestinationPath.c_str();
+	// Append a "\" at the end if we have no
+	if (strSPath[strSPath.GetLength() - 1] == L'\\') strSPath += L""; else strSPath += L"\\";
+	if (strSPath[strDPath.GetLength() - 1] == L'\\') strDPath += L""; else strDPath += L"\\";
+	CToolsDllApp::CopyFiles(strSPath, strDPath);
 	InitDestinationBranch();
 }
 
