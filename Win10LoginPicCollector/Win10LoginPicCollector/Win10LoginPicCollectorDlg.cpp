@@ -499,7 +499,6 @@ BOOL CWin10LoginPicCollectorDlg::OnToolTipText(UINT, NMHDR* pNMHDR, LRESULT* pRe
 	return FALSE;
 }
 
-
 /// <summary>
 /// OnNMClickListctrlDestination
 /// </summary>
@@ -625,7 +624,8 @@ void CWin10LoginPicCollectorDlg::LoadIniFileInNotpad()
 void CWin10LoginPicCollectorDlg::InitSourceBranch()
 {
 	CString strPath(m_appSettings.m_strSourcePath.c_str());
-	strPath += L"\\*.*";
+	// Append a "\" at the end if we have no
+	if (strPath[strPath.GetLength()-1] == L'\\') strPath += L"*.*"; else strPath += L"\\*.*";
 
 	// Replace the %USERNAME% with the real username if containing
 	if (strPath.Find(L"%USERNAME%") != -1)
@@ -651,9 +651,8 @@ void CWin10LoginPicCollectorDlg::InitSourceBranch()
 void CWin10LoginPicCollectorDlg::InitDestinationBranch()
 {
 	CString strPath(m_appSettings.m_strDestinationPath.c_str());
-	strPath += L"\\*.*";
-	CString strHelp(m_appSettings.m_strDestinationPath.c_str());
-	m_strDestinationPath = strHelp;
+	// Append a "\" at the end if we have no
+	if (strPath[strPath.GetLength() - 1] == L'\\') strPath += L"*.*"; else strPath += L"\\*.*";
 
 	vector<wstring> fileNames = CToolsDllApp::GetAllFilesInDir(strPath);
 	LoadListCtrl(fileNames);
