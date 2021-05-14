@@ -6,6 +6,10 @@
 #include "framework.h"
 #include "afxdialogex.h"
 
+
+#include "../spdlog/include/spdlog/spdlog.h"
+#include <spdlog/sinks/rotating_file_sink.h>
+
 #include "..\AboutBoxDll\AboutBox.h"
 
 #include "Win10LoginPicCollector.h"
@@ -38,6 +42,15 @@ CWin10LoginPicCollectorDlg::CWin10LoginPicCollectorDlg(CWnd* pParent /*=nullptr*
 	, m_strDestinationPath(_T(""))
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
+
+#pragma region log in file
+	auto logger = spdlog::rotating_logger_mt("MyCPPConsoleLogApp", "LogFile.log", 1024, 9);
+	spdlog::set_default_logger(logger);
+	spdlog::flush_on(spdlog::level::trace);
+#pragma endregion
+
+	spdlog::set_level(spdlog::level::trace);
+	spdlog::info("Start  Win10LoginPicCollector");
 }
 
 /// <summary>
@@ -602,6 +615,7 @@ void CWin10LoginPicCollectorDlg::SaveAppSettings()
 	m_appSettings.m_lRight = rect.right;
 	m_appSettings.m_lBottom = rect.bottom;
 	m_appSettings.SaveConfig();
+	spdlog::info("END Win10LoginPicCollector");
 }
 
 /// <summary>
