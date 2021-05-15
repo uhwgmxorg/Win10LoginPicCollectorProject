@@ -126,7 +126,7 @@ BOOL CWin10LoginPicCollectorDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// Set small icon
 
 	// TODO: Add extra initialization here
-	m_strVersion = L"1.0.0.6";
+	m_strVersion = L"1.0.0.7";
 
 #pragma region Set a Bold Font in Dlg Statics
 	// Get current font.
@@ -139,8 +139,10 @@ BOOL CWin10LoginPicCollectorDlg::OnInitDialog()
 	// Sets the new font back to static text.
 	GetDlgItem(IDC_STATIC_SOURCE)->SetFont(&staticFont);
 	GetDlgItem(IDC_STATIC_SOURCE_COUNT_FILES)->SetFont(&staticFont);
-	GetDlgItem(IDC_STATIC_DESTINATION)->SetFont(&staticFont);
-	GetDlgItem(IDC_STATIC_DESTINATION_COUNT_FILES)->SetFont(&staticFont);
+	GetDlgItem(IDC_STATIC_FILESS)->SetFont(&staticFont);
+    GetDlgItem(IDC_STATIC_DESTINATION)->SetFont(&staticFont);
+	GetDlgItem(IDC_STATIC_DESTINATION_COUNT_FILES)->SetFont(&staticFont); 
+    GetDlgItem(IDC_STATIC_FILESD)->SetFont(&staticFont);
 #pragma endregion
 
 #pragma region Add ToolBar to Dlg
