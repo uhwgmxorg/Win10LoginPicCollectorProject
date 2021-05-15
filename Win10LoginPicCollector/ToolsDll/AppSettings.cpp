@@ -20,6 +20,11 @@ wstring CAppSettings::m_strDestinationPathIni = L"C:\\DestinationPath";
 /// </summary>
 CAppSettings::CAppSettings()
 {
+
+    // Create the App dir in USERPROFILE
+    wstring user_path = CToolsDllApp::GetUserPath() + L"\\Win10LoginPicCollectorProject";
+    CToolsDllApp::CreateDir(user_path);
+
     LoadConfig();
 }
 
@@ -47,10 +52,10 @@ CAppSettings::~CAppSettings()
 /// <returns>lastError the last Win 32 Error</returns>
 unsigned int CAppSettings::LoadConfig()
 {
-    wstring exe_path(CToolsDllApp::GetExePath() + L"\\");
+    wstring ini_path(CToolsDllApp::GetUserPath() + L"\\Win10LoginPicCollectorProject\\");
     wchar_t szValue[SZ_VALUE_SIZE];
     wchar_t szIniFile[MAX_PATH];
-    wcscpy_s(szIniFile, (exe_path + m_strIniFlileName).c_str());
+    wcscpy_s(szIniFile, (ini_path + m_strIniFlileName).c_str());
 
 
     // [Window] section
@@ -87,10 +92,10 @@ unsigned int CAppSettings::LoadConfig()
 unsigned int CAppSettings::SaveConfig()
 {
     bool flag;
-    wstring exe_path(CToolsDllApp::GetExePath() + L"\\");
+    wstring ini_path(CToolsDllApp::GetUserPath() + L"\\Win10LoginPicCollectorProject\\");
     wchar_t szValue[SZ_VALUE_SIZE];
     wchar_t szIniFile[MAX_PATH];
-    wcscpy_s(szIniFile, (exe_path + m_strIniFlileName).c_str());
+    wcscpy_s(szIniFile, (ini_path + m_strIniFlileName).c_str());
 
 #pragma warning(disable : 4996) // error C4996: 'swprintf': function has been changed to conform with the ISO C standard, adding an extra character count parameter.
 

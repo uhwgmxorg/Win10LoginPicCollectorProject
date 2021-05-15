@@ -40,6 +40,8 @@ CWin10LoginPicCollectorDlg::CWin10LoginPicCollectorDlg(CWnd* pParent /*=nullptr*
 	, m_iNumFiles(0)
 	, m_strSourcePath(_T(""))
 	, m_strDestinationPath(_T(""))
+	, m_strCoutFilesSource(_T(""))
+	, m_strCoutFilesDestination(_T(""))
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 
@@ -67,6 +69,8 @@ void CWin10LoginPicCollectorDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_STATIC_SOURCE_PATH, m_strSourcePath);
 	DDX_Text(pDX, IDC_STATIC_DESTINATION_PATH, m_strDestinationPath);
 	DDX_Control(pDX, IDC_LISTCTRL_DESTINATION, m_ctrlDestination);
+	DDX_Text(pDX, IDC_STATIC_SOURCE_COUNT_FILES, m_strCoutFilesSource);
+	DDX_Text(pDX, IDC_STATIC_DESTINATION_COUNT_FILES, m_strCoutFilesDestination);
 }
 
 BEGIN_MESSAGE_MAP(CWin10LoginPicCollectorDlg, CDialogEx)
@@ -134,7 +138,9 @@ BOOL CWin10LoginPicCollectorDlg::OnInitDialog()
 	staticFont.CreateFontIndirect(&LogFont);
 	// Sets the new font back to static text.
 	GetDlgItem(IDC_STATIC_SOURCE)->SetFont(&staticFont);
+	GetDlgItem(IDC_STATIC_SOURCE_COUNT_FILES)->SetFont(&staticFont);
 	GetDlgItem(IDC_STATIC_DESTINATION)->SetFont(&staticFont);
+	GetDlgItem(IDC_STATIC_DESTINATION_COUNT_FILES)->SetFont(&staticFont);
 #pragma endregion
 
 #pragma region Add ToolBar to Dlg
@@ -386,6 +392,7 @@ void CWin10LoginPicCollectorDlg::OnClickedButtonCopy()
 	if (strSPath[strSPath.GetLength() - 1] == L'\\') strSPath += L""; else strSPath += L"\\";
 	if (strSPath[strDPath.GetLength() - 1] == L'\\') strDPath += L""; else strDPath += L"\\";
 	CToolsDllApp::CopyFiles(strSPath, strDPath);
+	spdlog::info(L"Copy all files from " + strSPath + L" to " + strDPath);
 	InitDestinationBranch();
 }
 
@@ -656,6 +663,7 @@ void CWin10LoginPicCollectorDlg::InitSourceBranch()
 
 	vector<wstring> fileNames = CToolsDllApp::GetAllFilesInDir(strPath);
 	LoadListBox(fileNames);
+	m_strCoutFilesSource.Format(L"%i",m_iNumFiles);
 	UpdateData(false);
 
 	// Status output
@@ -675,10 +683,11 @@ void CWin10LoginPicCollectorDlg::InitDestinationBranch()
 
 	vector<wstring> fileNames = CToolsDllApp::GetAllFilesInDir(strPath);
 	LoadListCtrl(fileNames);
+	int count = CToolsDllApp::NumberOfFilesIn(strPath);
+	m_strCoutFilesDestination.Format(L"%i",count);
 	UpdateData(false);
 
 	// Status output
-	int count = CToolsDllApp::NumberOfFilesIn(strPath);
 	CString strStatus;
 	strStatus.Format(L"%i Files in %s", count, strPath);
 	m_StatusBar.SetPaneText(0, strStatus);

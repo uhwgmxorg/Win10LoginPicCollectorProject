@@ -24,6 +24,8 @@
 #define ID_BUTTON_COPY                  1008
 #define IDC_STATIC_SOURCE               1009
 #define IDC_STATIC_DESTINATION          1010
+#define IDC_STATIC_SOURCE_COUNT_FILES   1011
+#define IDC_STATIC_DESTINATION_COUNT_FILES 1012
 #define IDR_                            32771
 #define ID_BUTTON_EXIT                  32772
 #define ID_BUTTON_SELECT_PATH           32773
@@ -39,7 +41,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        137
 #define _APS_NEXT_COMMAND_VALUE         32779
-#define _APS_NEXT_CONTROL_VALUE         1011
+#define _APS_NEXT_CONTROL_VALUE         1013
 #define _APS_NEXT_SYMED_VALUE           103
 #endif
 #endif

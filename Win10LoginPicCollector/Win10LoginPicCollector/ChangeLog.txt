@@ -1,6 +1,13 @@
 Program Win10LoginPicCollector ChangeLog
 
 
+   15.05.2021 1.0.0.7
+
+   - Add the first attempt of logging (spdlog)
+   - Moving the Ini-File from the Exe Dir to 
+     the User-Dir
+
+
    19.04.2021 1.0.0.6
 
    - '\' Bug

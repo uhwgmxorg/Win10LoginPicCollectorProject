@@ -90,6 +90,17 @@ bool CToolsDllApp::CreateDir(const wchar_t* lpszDirname)
 }
 
 /// <summary>
+/// CreateDir
+/// </summary>
+/// <param name="dirname"></param>
+/// <returns></returns>
+bool CToolsDllApp::CreateDir(wstring dirname)
+{
+    return CreateDirectory(dirname.c_str(), NULL);
+}
+
+
+/// <summary>
 /// GetExePath
 /// Get the path of the running exe
 /// </summary>
@@ -102,6 +113,19 @@ wstring CToolsDllApp::GetExePath()
 	filesystem::path exe_path(path);
 
 	return wstring(exe_path.parent_path());
+}
+
+/// <summary>
+/// GetUserPath
+/// </summary>
+/// <returns></returns>
+wstring CToolsDllApp::GetUserPath()
+{
+    wchar_t path[MAX_PATH] = { 0 };
+    
+    ::GetEnvironmentVariableW(L"USERPROFILE",path,MAX_PATH);
+
+    return wstring(path);
 }
 
 /// <summary>

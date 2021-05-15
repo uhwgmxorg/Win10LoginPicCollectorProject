@@ -77,4 +77,6 @@ public:
 	afx_msg void OnClickedButtonCopy();
 	afx_msg void OnNMClickListctrlDestination(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnNMDblclkListctrlDestination(NMHDR* pNMHDR, LRESULT* pResult);
+	CString m_strCoutFilesSource;
+	CString m_strCoutFilesDestination;
 };

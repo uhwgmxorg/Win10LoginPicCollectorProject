@@ -33,7 +33,9 @@ public:
 public:
 	static bool FileExsist(const wchar_t* lpszFilename);
 	static bool CreateDir(const wchar_t* lpszFilename);
+	static bool CreateDir(wstring dirname);
 	static wstring GetExePath();
+	static wstring GetUserPath();
 	static int NumberOfFilesIn(const wchar_t* lpszPath);
 	static vector<wstring> GetAllFilesInDir(const wchar_t* lpszPath);
 	static wstring GetPath(const wchar_t* lpszPath = NULL);
