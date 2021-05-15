@@ -6,6 +6,9 @@ Program Win10LoginPicCollector ChangeLog
    - Add the first attempt of logging (spdlog)
    - Moving the Ini-File from the Exe Dir to 
      the User-Dir
+   - Fix file counter
+   - Add number of files in Source and Destination 
+     on top of List-Box/List-View
 
 
    19.04.2021 1.0.0.6

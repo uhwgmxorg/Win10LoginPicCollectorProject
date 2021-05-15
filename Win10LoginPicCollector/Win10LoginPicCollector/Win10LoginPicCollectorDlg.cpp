@@ -6,7 +6,7 @@
 #include "framework.h"
 #include "afxdialogex.h"
 
-
+#define SPDLOG_WCHAR_TO_UTF8_SUPPORT 
 #include "../spdlog/include/spdlog/spdlog.h"
 #include <spdlog/sinks/rotating_file_sink.h>
 
@@ -46,7 +46,7 @@ CWin10LoginPicCollectorDlg::CWin10LoginPicCollectorDlg(CWnd* pParent /*=nullptr*
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 
 #pragma region log in file
-	auto logger = spdlog::rotating_logger_mt("MyCPPConsoleLogApp", "LogFile.log", 1024, 9);
+	auto logger = spdlog::rotating_logger_mt("Win10LoginPicCollector", "LogFile.log", 1048576, 9);
 	spdlog::set_default_logger(logger);
 	spdlog::flush_on(spdlog::level::trace);
 #pragma endregion
@@ -394,7 +394,8 @@ void CWin10LoginPicCollectorDlg::OnClickedButtonCopy()
 	if (strSPath[strSPath.GetLength() - 1] == L'\\') strSPath += L""; else strSPath += L"\\";
 	if (strSPath[strDPath.GetLength() - 1] == L'\\') strDPath += L""; else strDPath += L"\\";
 	CToolsDllApp::CopyFiles(strSPath, strDPath);
-	spdlog::info(L"Copy all files from " + strSPath + L" to " + strDPath);
+	wstring log = L"Copy all files from " + strSPath + L" to " + strDPath;
+	spdlog::info(log.c_str());
 	InitDestinationBranch();
 }
 
@@ -659,7 +660,7 @@ void CWin10LoginPicCollectorDlg::InitSourceBranch()
 	if (strPath.Find(L"%USERNAME%") != -1)
 		strPath.Replace(L"%USERNAME%", CToolsDllApp::GetMyUserName().c_str());
 
-	m_iNumFiles = CToolsDllApp::NumberOfFilesIn(strPath);
+	m_iNumFiles = CToolsDllApp::NumberOfFilesIn(strPath) - 2;
 	CString strHelp(m_appSettings.m_strSourcePath.c_str());
 	m_strSourcePath = strHelp;
 
@@ -685,7 +686,7 @@ void CWin10LoginPicCollectorDlg::InitDestinationBranch()
 
 	vector<wstring> fileNames = CToolsDllApp::GetAllFilesInDir(strPath);
 	LoadListCtrl(fileNames);
-	int count = CToolsDllApp::NumberOfFilesIn(strPath);
+	int count = CToolsDllApp::NumberOfFilesIn(strPath) - 2;
 	m_strCoutFilesDestination.Format(L"%i",count);
 	UpdateData(false);
 
