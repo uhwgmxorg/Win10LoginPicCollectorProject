@@ -46,7 +46,10 @@ CWin10LoginPicCollectorDlg::CWin10LoginPicCollectorDlg(CWnd* pParent /*=nullptr*
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 
 #pragma region log in file
-	auto logger = spdlog::rotating_logger_mt("Win10LoginPicCollector", "LogFile.log", 1048576, 9);
+	wstring wuser_path = CToolsDllApp::GetUserPath();
+	string user_path(wuser_path.begin(),wuser_path.end());
+    user_path +=  "\\Win10LoginPicCollectorProject";
+	auto logger = spdlog::rotating_logger_mt("Win10LoginPicCollector", user_path + "\\" + "LogFile.log", 1048576, 9);
 	spdlog::set_default_logger(logger);
 	spdlog::flush_on(spdlog::level::trace);
 #pragma endregion

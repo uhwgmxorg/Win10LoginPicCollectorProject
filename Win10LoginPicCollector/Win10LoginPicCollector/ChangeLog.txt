@@ -1,6 +1,11 @@
 Program Win10LoginPicCollector ChangeLog
 
 
+   xx.05.2021 1.0.0.x
+
+   - Move the LogFile.log in the User-Dir
+
+
    16.05.2021 1.0.0.8
 
    - Add reloade buttons
