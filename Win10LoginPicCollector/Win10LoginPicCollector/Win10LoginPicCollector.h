@@ -27,6 +27,8 @@ public:
 // Implementation
 
 	DECLARE_MESSAGE_MAP()
+	afx_msg void OnButtonReloadDestination();
+	afx_msg void OnButtonReloadSource();
 };
 
 extern CWin10LoginPicCollectorApp theApp;

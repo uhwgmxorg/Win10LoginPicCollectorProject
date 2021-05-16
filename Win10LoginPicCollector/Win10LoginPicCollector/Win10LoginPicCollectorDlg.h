@@ -79,4 +79,6 @@ public:
 	afx_msg void OnNMDblclkListctrlDestination(NMHDR* pNMHDR, LRESULT* pResult);
 	CString m_strCoutFilesSource;
 	CString m_strCoutFilesDestination;
+	afx_msg void OnClickedButtonReloadDestination();
+	afx_msg void OnClickedButtonReloadSource();
 };

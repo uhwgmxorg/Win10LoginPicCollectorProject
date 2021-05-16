@@ -1,6 +1,11 @@
 Program Win10LoginPicCollector ChangeLog
 
 
+   16.05.2021 1.0.0.8
+
+   - Add reloade buttons
+
+
    15.05.2021 1.0.0.7
 
    - Add the first attempt of logging (spdlog)

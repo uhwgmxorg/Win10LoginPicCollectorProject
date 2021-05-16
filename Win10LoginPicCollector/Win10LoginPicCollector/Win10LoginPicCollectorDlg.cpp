@@ -90,6 +90,8 @@ BEGIN_MESSAGE_MAP(CWin10LoginPicCollectorDlg, CDialogEx)
 	ON_NOTIFY_EX_RANGE(TTN_NEEDTEXTA, 0, 0xFFFF, OnToolTipText)
 	ON_NOTIFY(NM_CLICK, IDC_LISTCTRL_DESTINATION, &CWin10LoginPicCollectorDlg::OnNMClickListctrlDestination)
 	ON_NOTIFY(NM_DBLCLK, IDC_LISTCTRL_DESTINATION, &CWin10LoginPicCollectorDlg::OnNMDblclkListctrlDestination)
+	ON_BN_CLICKED(IDC_BUTTON_RELOAD_DESTINATION, &CWin10LoginPicCollectorDlg::OnClickedButtonReloadDestination)
+	ON_BN_CLICKED(IDC_BUTTON_RELOAD_SOURCE, &CWin10LoginPicCollectorDlg::OnClickedButtonReloadSource)
 END_MESSAGE_MAP()
 
 /// <summary>
@@ -381,6 +383,22 @@ void CWin10LoginPicCollectorDlg::OnButtonAbout()
 //-       Button Events        -/
 //------------------------------/
 #pragma region My Button Events
+
+/// <summary>
+/// OnClickedButtonReloadDestination
+/// </summary>
+void CWin10LoginPicCollectorDlg::OnClickedButtonReloadDestination()
+{
+	InitDestinationBranch();
+}
+
+/// <summary>
+/// OnClickedButtonReloadSource
+/// </summary>
+void CWin10LoginPicCollectorDlg::OnClickedButtonReloadSource()
+{
+	InitSourceBranch();
+}
 
 /// <summary>
 /// OnClickedButtonCopy
