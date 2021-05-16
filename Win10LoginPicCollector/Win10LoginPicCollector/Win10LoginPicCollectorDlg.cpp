@@ -684,6 +684,18 @@ void CWin10LoginPicCollectorDlg::InitDestinationBranch()
 	// Append a "\" at the end if we have no
 	if (strPath[strPath.GetLength() - 1] == L'\\') strPath += L"*.*"; else strPath += L"\\*.*";
 
+	// Check if Destination path exsits
+	if (!CToolsDllApp::FileExsist(m_appSettings.m_strDestinationPath.c_str()))
+	{
+		CString message;
+		message.Format(L"The Destination Path:\n%s\ndose not exsist.\nDo you want to create it?",m_appSettings.m_strDestinationPath.c_str());
+		// if not create it
+		if (MessageBox(message, L"Windows 10 Pic Collectorg", MB_YESNO | MB_ICONQUESTION) == IDYES)
+			CToolsDllApp::CreateDir(m_appSettings.m_strDestinationPath.c_str());
+		else
+			return;
+	}
+
 	vector<wstring> fileNames = CToolsDllApp::GetAllFilesInDir(strPath);
 	LoadListCtrl(fileNames);
 	int count = CToolsDllApp::NumberOfFilesIn(strPath) - 2;
