@@ -717,8 +717,8 @@ void CWin10LoginPicCollectorDlg::InitDestinationBranch()
 			return;
 	}
 
-	vector<wstring> fileNames = CToolsDllApp::GetAllFilesInDir(strPath);
-	LoadListCtrl(fileNames);
+	m_fileNames = CToolsDllApp::GetAllFilesInDir(strPath);
+	StartLoadListCtrlThread();
 	int count = CToolsDllApp::NumberOfFilesIn(strPath) - 2;
 	m_strCoutFilesDestination.Format(L"%i",count);
 	UpdateData(false);
@@ -747,40 +747,70 @@ void CWin10LoginPicCollectorDlg::LoadListBox(vector<wstring> list)
 }
 
 /// <summary>
-/// LoadListCtrl
+/// StartLoadListCtrlThread
+/// </summary>
+void CWin10LoginPicCollectorDlg::StartLoadListCtrlThread()
+{
+	AfxBeginThread(LoadListCtrlThreadProc,(LPVOID)this);
+	m_bRunning = TRUE; // Caution: in normal cases, this variable access must be protected with a semaphore
+}
+
+/// <summary>
+/// GetAndPrintLastErrorTxt
+/// Print the Last Error (if any) 
+/// as text in the Output
+/// </summary>
+/// <param name="strFuncName"></param>
+void CWin10LoginPicCollectorDlg::GetAndPrintLastErrorTxt(wstring strFuncName)
+{
+	DWORD dwerr = GetLastError(); if (!dwerr) return;
+	// Get the last Error in text
+	wchar_t buf[256];
+	FormatMessageW(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+		NULL, dwerr, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+		buf, (sizeof(buf) / sizeof(wchar_t)), NULL);
+	TRACE(_T("Failed on %s LastError %u %s\n"), strFuncName.c_str(), dwerr, buf);
+}
+
+#pragma endregion
+
+
+/// <summary>
+/// LoadListCtrlThreadProc
 /// This function loads the images with their properties 
 /// and adds reduced images in the Image-List assigned to 
-/// the ListCtr.
+/// the ListCtr in an extra thread.
 /// </summary>
 /// <param name="list"></param>
-void CWin10LoginPicCollectorDlg::LoadListCtrl(vector<wstring> list)
+UINT LoadListCtrlThreadProc(LPVOID lpvoid)
 {
+	CWin10LoginPicCollectorDlg* pPicCollectorDlg = (CWin10LoginPicCollectorDlg*)lpvoid;
 	wstring stdstr;
 	COLORREF rgbTransparentColor = 0xFFFFFF;
 
 	// Delete old items if any
-	m_ctrlDestination.DeleteAllItems();
+	pPicCollectorDlg->m_ctrlDestination.DeleteAllItems();
 	// Delete the ImageList if we have one and initialise it new
-	if (m_pImageListThumb) delete(m_pImageListThumb);
-	m_pImageListThumb = new CImageList();
+	if (pPicCollectorDlg->m_pImageListThumb) delete(pPicCollectorDlg->m_pImageListThumb);
+	pPicCollectorDlg->m_pImageListThumb = new CImageList();
 	// Create the ImageList with 100*90 icons and 32 bpp color depth
-	m_pImageListThumb->Create(THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT, ILC_COLOR32, 0, 1);
+	pPicCollectorDlg->m_pImageListThumb->Create(THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT, ILC_COLOR32, 0, 1);
 	// Link the ImageList to the Control
-	m_ctrlDestination.SetImageList(m_pImageListThumb, LVSIL_NORMAL);
-	m_pImageListThumb->SetImageCount(list.size());
-	m_ctrlDestination.SetRedraw(FALSE);
+	pPicCollectorDlg->m_ctrlDestination.SetImageList(pPicCollectorDlg->m_pImageListThumb, LVSIL_NORMAL);
+	pPicCollectorDlg->m_pImageListThumb->SetImageCount(pPicCollectorDlg->m_fileNames.size());
+	pPicCollectorDlg->m_ctrlDestination.SetRedraw(FALSE);
 
 	// Iterate through all files found, load the 
 	// image and paste it into the LstCtrl
-	for (size_t i = 0; i < list.size(); i++)
+	for (size_t i = 0; i < pPicCollectorDlg->m_fileNames.size(); i++)
 	{
 		HBITMAP hbmReturn = NULL;
 		Bitmap* pbmPhoto = NULL;
 		CBitmap bmp1;
 
 		// Insert the item to the CListCtrl
-		m_ctrlDestination.InsertItem(i, list.at(i).c_str(), i);
-        stdstr = m_appSettings.m_strDestinationPath + L"\\" + list.at(i);
+		pPicCollectorDlg->m_ctrlDestination.InsertItem(i, pPicCollectorDlg->m_fileNames.at(i).c_str(), i);
+		stdstr = pPicCollectorDlg->m_appSettings.m_strDestinationPath + L"\\" + pPicCollectorDlg->m_fileNames.at(i);
 		Bitmap image(stdstr.c_str());
 
 		int sourceWidth = image.GetWidth();
@@ -820,7 +850,7 @@ void CWin10LoginPicCollectorDlg::LoadListCtrl(vector<wstring> list)
 		pbmPhoto->GetHBITMAP(colorW, &hbmReturn);
 
 		bmp1.Attach(hbmReturn);
-		m_pImageListThumb->Replace(i, &bmp1, NULL);
+		pPicCollectorDlg->m_pImageListThumb->Replace(i, &bmp1, NULL);
 
 		delete grPhoto;
 		::delete pbmPhoto;  // see ::new above
@@ -828,25 +858,10 @@ void CWin10LoginPicCollectorDlg::LoadListCtrl(vector<wstring> list)
 		DeleteObject(hbmReturn);
 	}
 
-	m_ctrlDestination.SetRedraw(TRUE);
-	m_ctrlDestination.Invalidate();
-}
+	pPicCollectorDlg->m_ctrlDestination.SetRedraw(TRUE);
+	pPicCollectorDlg->m_ctrlDestination.Invalidate();
 
-/// <summary>
-/// GetAndPrintLastErrorTxt
-/// Print the Last Error (if any) 
-/// as text in the Output
-/// </summary>
-/// <param name="strFuncName"></param>
-void CWin10LoginPicCollectorDlg::GetAndPrintLastErrorTxt(wstring strFuncName)
-{
-	DWORD dwerr = GetLastError(); if (!dwerr) return;
-	// Get the last Error in text
-	wchar_t buf[256];
-	FormatMessageW(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
-		NULL, dwerr, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-		buf, (sizeof(buf) / sizeof(wchar_t)), NULL);
-	TRACE(_T("Failed on %s LastError %u %s\n"), strFuncName.c_str(), dwerr, buf);
-}
+	pPicCollectorDlg->m_bRunning = FALSE; // Caution: in normal cases, this variable access must be protected with a semaphore
 
-#pragma endregion
+	return 0;
+}

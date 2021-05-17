@@ -30,8 +30,11 @@ protected:
 	HICON m_hIcon;
 	CToolBar m_ctrlToolBar1;
 	CStatusBar m_StatusBar;
-	CAppSettings m_appSettings;
 	CString m_strVersion;
+	CString m_strSourcePath;
+	CString m_strDestinationPath;
+	CString m_strCoutFilesSource;
+	CString m_strCoutFilesDestination;
 
 	// Generated message map functions
 	virtual BOOL OnInitDialog();
@@ -41,28 +44,35 @@ protected:
 	afx_msg BOOL OnToolTipText(UINT nID, NMHDR* pNMHDR, LRESULT* pResult);
 	DECLARE_MESSAGE_MAP()
 
-	void LoadIniFileInNotpad();
 public:
 	afx_msg void OnButtonExit();
 	afx_msg void OnButtonSelectSourcePath();
 	afx_msg void OnButtonEditIni();
 	afx_msg void OnButtonAbout();
+
+	BOOL	m_bRunning,
+			m_bTerminate;
+	CWinThread* m_pThread;
+	CListCtrl m_ctrlDestination;
+	CImageList* m_pImageListThumb;
+	CAppSettings m_appSettings;
+	vector<wstring> m_fileNames;
+
 private:
 	int m_iNumFiles;
 	CListBox m_listBox;
-	CListCtrl m_ctrlDestination;
-	CImageList *m_pImageListThumb;
 
 	// GDI+
 	GdiplusStartupInput m_gdiplusStartupInput;
 	GdiplusStartupOutput m_gdiplusStartupOutput;
 	ULONG_PTR m_gdiplusToken;
 
+	void LoadIniFileInNotpad();
 	void InitSourceBranch();
 	void InitDestinationBranch();
 	void SaveAppSettings();
 	void LoadListBox(std::vector<std::wstring> list);
-	void LoadListCtrl(std::vector<std::wstring> list);
+	void StartLoadListCtrlThread();	
 	void GetAndPrintLastErrorTxt(std::wstring strFuncName);
 	void InsertItem(CString strItem, int iImage);
 
@@ -70,15 +80,13 @@ public:
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
 	afx_msg void OnClose();
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
-	CString m_strSourcePath;
-	CString m_strDestinationPath;
 	afx_msg void OnButtonSelectDestinationPath();
 	afx_msg void OnButtonResetConfig();
 	afx_msg void OnClickedButtonCopy();
 	afx_msg void OnNMClickListctrlDestination(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnNMDblclkListctrlDestination(NMHDR* pNMHDR, LRESULT* pResult);
-	CString m_strCoutFilesSource;
-	CString m_strCoutFilesDestination;
 	afx_msg void OnClickedButtonReloadDestination();
 	afx_msg void OnClickedButtonReloadSource();
 };
+
+UINT LoadListCtrlThreadProc(LPVOID lpvoid);
