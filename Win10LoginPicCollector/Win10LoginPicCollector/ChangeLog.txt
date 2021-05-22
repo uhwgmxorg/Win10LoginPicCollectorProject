@@ -1,6 +1,11 @@
 Program Win10LoginPicCollector ChangeLog
 
 
+   22.05.2021 1.0.0.10
+
+   - Bug in LoadIniFileInNotpad
+
+
    17.05.2021 1.0.0.9
 
    - Move the LogFile.log in the User-Dir

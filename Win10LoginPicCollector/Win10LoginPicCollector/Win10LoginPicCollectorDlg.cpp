@@ -131,7 +131,7 @@ BOOL CWin10LoginPicCollectorDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// Set small icon
 
 	// TODO: Add extra initialization here
-	m_strVersion = L"1.0.0.9";
+	m_strVersion = L"1.0.0.10";
 
 #pragma region Set a Bold Font in Dlg Statics
 	// Get current font.
@@ -654,12 +654,13 @@ void CWin10LoginPicCollectorDlg::SaveAppSettings()
 /// </summary>
 void CWin10LoginPicCollectorDlg::LoadIniFileInNotpad()
 {
-	TCHAR       szHelp[MAX_PATH];
-	::GetModuleFileName(::GetModuleHandle(NULL), szHelp, MAX_PATH);
-	CString strHelp = szHelp;
+	wstring exeName = L"Win10LoginPicCollector.exe";
+	wstring user_path = CToolsDllApp::GetUserPath() + L"\\Win10LoginPicCollectorProject";
+	wstring user_path_exe = user_path + L"\\" + exeName;
+	CString strHelp = user_path_exe.c_str();
 	CString strIniPathFile = strHelp.Left(strHelp.GetLength() - 3) + _T("ini");
-	CString strComand;
-	strComand.Format(L"notepad.exe");
+	CString strComand = L"notepad.exe";
+
 	ShellExecute(m_hWnd, L"open", strComand, strIniPathFile, NULL, SW_SHOWNORMAL);
 
 	// Status output
