@@ -508,7 +508,7 @@ BOOL CWin10LoginPicCollectorDlg::OnToolTipText(UINT, NMHDR* pNMHDR, LRESULT* pRe
 	TOOLTIPTEXTW* pTTTW = (TOOLTIPTEXTW*)pNMHDR;
 	TCHAR szFullText[2048];
 	CString strTipText;
-	UINT nID = pNMHDR->idFrom;
+	INT64 nID = (UINT)pNMHDR->idFrom;
 
 	if (pNMHDR->code == TTN_NEEDTEXTA && (pTTTA->uFlags & TTF_IDISHWND) ||
 		pNMHDR->code == TTN_NEEDTEXTW && (pTTTW->uFlags & TTF_IDISHWND))
@@ -521,7 +521,7 @@ BOOL CWin10LoginPicCollectorDlg::OnToolTipText(UINT, NMHDR* pNMHDR, LRESULT* pRe
 	// ID_BUTTON_EXIT (32772) in ouer case
 	if (nID != 0) // will be zero on a separator
 	{
-		AfxLoadString(nID, szFullText);
+		AfxLoadString((UINT)nID, szFullText);
 		strTipText = szFullText;
 
 		// see: https://docs.microsoft.com/en-us/windows/win32/api/commctrl/ns-commctrl-nmttdispinfow
@@ -798,7 +798,7 @@ UINT LoadListCtrlThreadProc(LPVOID lpvoid)
 	pPicCollectorDlg->m_pImageListThumb->Create(THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT, ILC_COLOR32, 0, 1);
 	// Link the ImageList to the Control
 	pPicCollectorDlg->m_ctrlDestination.SetImageList(pPicCollectorDlg->m_pImageListThumb, LVSIL_NORMAL);
-	pPicCollectorDlg->m_pImageListThumb->SetImageCount(pPicCollectorDlg->m_fileNames.size());
+	pPicCollectorDlg->m_pImageListThumb->SetImageCount((UINT)pPicCollectorDlg->m_fileNames.size());
 	pPicCollectorDlg->m_ctrlDestination.SetRedraw(FALSE);
 
 	// Iterate through all files found, load the 
@@ -810,7 +810,7 @@ UINT LoadListCtrlThreadProc(LPVOID lpvoid)
 		CBitmap bmp1;
 
 		// Insert the item to the CListCtrl
-		pPicCollectorDlg->m_ctrlDestination.InsertItem(i, pPicCollectorDlg->m_fileNames.at(i).c_str(), i);
+		pPicCollectorDlg->m_ctrlDestination.InsertItem((int)i, pPicCollectorDlg->m_fileNames.at(i).c_str(), (int)i);
 		stdstr = pPicCollectorDlg->m_appSettings.m_strDestinationPath + L"\\" + pPicCollectorDlg->m_fileNames.at(i);
 		Bitmap image(stdstr.c_str());
 
@@ -851,7 +851,7 @@ UINT LoadListCtrlThreadProc(LPVOID lpvoid)
 		pbmPhoto->GetHBITMAP(colorW, &hbmReturn);
 
 		bmp1.Attach(hbmReturn);
-		pPicCollectorDlg->m_pImageListThumb->Replace(i, &bmp1, NULL);
+		pPicCollectorDlg->m_pImageListThumb->Replace((int)i, &bmp1, NULL);
 
 		delete grPhoto;
 		::delete pbmPhoto;  // see ::new above
