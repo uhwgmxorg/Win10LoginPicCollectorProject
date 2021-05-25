@@ -112,7 +112,8 @@
       <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <PostBuildEvent>
-      <Command>copy *.txt $(OutputPath)</Command>
+      <Command>copy *.txt $(OutputPath)
+copy $(SolutionDir)lib\*.* $(OutputPath)</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -141,7 +142,8 @@
       <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <PostBuildEvent>
-      <Command>copy *.txt $(OutputPath)</Command>
+      <Command>copy *.txt $(OutputPath)
+copy $(SolutionDir)lib\*.* $(OutputPath)</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -174,7 +176,8 @@
       <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <PostBuildEvent>
-      <Command>copy *.txt $(OutputPath)</Command>
+      <Command>copy *.txt $(OutputPath)
+copy $(SolutionDir)lib\*.* $(OutputPath)</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -207,7 +210,8 @@
       <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <PostBuildEvent>
-      <Command>copy *.txt $(OutputPath)</Command>
+      <Command>copy *.txt $(OutputPath)
+copy $(SolutionDir)lib\*.* $(OutputPath)</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -232,6 +236,7 @@
     <ResourceCompile Include="Win10LoginPicCollector.rc" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="getDownLoadUrl.php" />
     <None Include="res\Win10LoginPicCollector.rc2" />
   </ItemGroup>
   <ItemGroup>
@@ -239,12 +244,14 @@
     <Image Include="res\icon1.ico" />
     <Image Include="res\Icon_32x32_32-Bit.ico" />
     <Image Include="res\toolbar1.bmp" />
-    <Image Include="res\toolbar2.bmp" />
     <Image Include="res\Win10LoginPicCollector.ico" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="ChangeLog.txt" />
     <Text Include="ListOfKnownBugs.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Xml Include="..\lib\gup.xml" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -68,6 +68,7 @@ private:
 	ULONG_PTR m_gdiplusToken;
 
 	void LoadIniFileInNotpad();
+	void CheckForUpdates();
 	void InitSourceBranch();
 	void InitDestinationBranch();
 	void SaveAppSettings();
@@ -87,6 +88,7 @@ public:
 	afx_msg void OnNMDblclkListctrlDestination(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnClickedButtonReloadDestination();
 	afx_msg void OnClickedButtonReloadSource();
+	afx_msg void OnButtonDownload();
 };
 
 UINT LoadListCtrlThreadProc(LPVOID lpvoid);

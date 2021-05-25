@@ -37,13 +37,15 @@
 #define ID_BUTTON_ABOUT                 32776
 #define ID_BUTTON_SELECT_DESTINATION_PATH 32777
 #define ID_BUTTON_RESET_CONFIG          32778
+#define ID_BUTTON32779                  32779
+#define ID_BUTTON_DOWNLOAD              32779
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        137
-#define _APS_NEXT_COMMAND_VALUE         32779
+#define _APS_NEXT_COMMAND_VALUE         32780
 #define _APS_NEXT_CONTROL_VALUE         1018
 #define _APS_NEXT_SYMED_VALUE           103
 #endif

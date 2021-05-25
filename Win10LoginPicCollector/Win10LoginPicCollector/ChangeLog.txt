@@ -1,6 +1,11 @@
 Program Win10LoginPicCollector ChangeLog
 
 
+   25.05.2021 1.1.0.0
+
+   - Add GUP and Check for Download
+
+
    22.05.2021 1.0.0.10
 
    - Bug in LoadIniFileInNotpad

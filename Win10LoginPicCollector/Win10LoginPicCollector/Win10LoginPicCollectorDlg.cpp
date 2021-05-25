@@ -95,6 +95,7 @@ BEGIN_MESSAGE_MAP(CWin10LoginPicCollectorDlg, CDialogEx)
 	ON_NOTIFY(NM_DBLCLK, IDC_LISTCTRL_DESTINATION, &CWin10LoginPicCollectorDlg::OnNMDblclkListctrlDestination)
 	ON_BN_CLICKED(IDC_BUTTON_RELOAD_DESTINATION, &CWin10LoginPicCollectorDlg::OnClickedButtonReloadDestination)
 	ON_BN_CLICKED(IDC_BUTTON_RELOAD_SOURCE, &CWin10LoginPicCollectorDlg::OnClickedButtonReloadSource)
+	ON_COMMAND(ID_BUTTON_DOWNLOAD, &CWin10LoginPicCollectorDlg::OnButtonDownload)
 END_MESSAGE_MAP()
 
 /// <summary>
@@ -131,7 +132,7 @@ BOOL CWin10LoginPicCollectorDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// Set small icon
 
 	// TODO: Add extra initialization here
-	m_strVersion = L"1.0.0.10";
+	m_strVersion = L"1.1.0.0";
 
 #pragma region Set a Bold Font in Dlg Statics
 	// Get current font.
@@ -361,6 +362,16 @@ void CWin10LoginPicCollectorDlg::OnButtonEditIni()
 	TRACE(_T("OnButtonEditIni was pressed\n"));
 
 	LoadIniFileInNotpad();
+}
+
+/// <summary>
+/// OnButtonDownload
+/// </summary>
+void CWin10LoginPicCollectorDlg::OnButtonDownload()
+{
+	TRACE(_T("OnButtonDownload was pressed\n"));
+
+	CheckForUpdates();
 }
 
 /// <summary>
@@ -667,6 +678,27 @@ void CWin10LoginPicCollectorDlg::LoadIniFileInNotpad()
 	CString strStatus;
 	strStatus.Format(L"Show and edit the Ini File %s", strHelp);
 	m_StatusBar.SetPaneText(0, strStatus);
+}
+
+/// <summary>
+/// CheckForUpdates
+/// </summary>
+void CWin10LoginPicCollectorDlg::CheckForUpdates()
+{
+	wstring exeName = L"\\GUP.exe";
+	wstring exe_path = CToolsDllApp::GetExePath();
+	CString strHelp = exe_path.c_str();
+	CString strComand = strHelp + exeName.c_str();
+	CString strParameter = L"\\gup.xml";
+	CString strPath = exe_path.c_str();
+
+	ShellExecute(m_hWnd, L"open", strComand, strParameter, strPath, SW_SHOWNORMAL);
+
+	// Status output
+	CString strStatus;
+	strStatus.Format(L"Check for Updates");
+	m_StatusBar.SetPaneText(0, strStatus);
+
 }
 
 /// <summary>
