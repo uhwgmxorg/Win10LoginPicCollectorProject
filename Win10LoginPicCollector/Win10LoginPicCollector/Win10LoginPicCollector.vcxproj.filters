@@ -77,5 +77,6 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="ChangeLog.txt" />
+    <Text Include="ListOfKnownBugs.txt" />
   </ItemGroup>
 </Project>
