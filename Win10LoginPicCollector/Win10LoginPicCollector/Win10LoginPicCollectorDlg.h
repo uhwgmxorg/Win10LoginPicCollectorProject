@@ -89,6 +89,8 @@ public:
 	afx_msg void OnClickedButtonReloadDestination();
 	afx_msg void OnClickedButtonReloadSource();
 	afx_msg void OnButtonDownload();
+	afx_msg void OnPopupMenueitem01();
+	afx_msg void OnContextMenu(CWnd* /*pWnd*/, CPoint /*point*/);
 };
 
 UINT LoadListCtrlThreadProc(LPVOID lpvoid);

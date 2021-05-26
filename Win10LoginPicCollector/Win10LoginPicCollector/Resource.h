@@ -11,6 +11,8 @@
 #define IDR_MAINFRAME                   134
 #define ID_INDICATOR_PANE               135
 #define ID_INDICATOR_TIME               136
+#define IDR_MENU1                       137
+#define IDR_SUBMIT                      137
 #define IDC_STATIC_NUMFILES_TITLE       1000
 #define IDC_STATIC_NUMFILES             1001
 #define IDC_LIST1                       1002
@@ -37,15 +39,15 @@
 #define ID_BUTTON_ABOUT                 32776
 #define ID_BUTTON_SELECT_DESTINATION_PATH 32777
 #define ID_BUTTON_RESET_CONFIG          32778
-#define ID_BUTTON32779                  32779
 #define ID_BUTTON_DOWNLOAD              32779
+#define ID_POPUP_MENUEITEM01            32780
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        137
-#define _APS_NEXT_COMMAND_VALUE         32780
+#define _APS_NEXT_RESOURCE_VALUE        138
+#define _APS_NEXT_COMMAND_VALUE         32781
 #define _APS_NEXT_CONTROL_VALUE         1018
 #define _APS_NEXT_SYMED_VALUE           103
 #endif

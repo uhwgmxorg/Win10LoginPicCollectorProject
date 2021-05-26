@@ -5,6 +5,7 @@
 #include "pch.h"
 #include "framework.h"
 #include "afxdialogex.h"
+#include "afxwin.h"
 
 #define SPDLOG_WCHAR_TO_UTF8_SUPPORT 
 #include "../spdlog/include/spdlog/spdlog.h"
@@ -96,6 +97,8 @@ BEGIN_MESSAGE_MAP(CWin10LoginPicCollectorDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON_RELOAD_DESTINATION, &CWin10LoginPicCollectorDlg::OnClickedButtonReloadDestination)
 	ON_BN_CLICKED(IDC_BUTTON_RELOAD_SOURCE, &CWin10LoginPicCollectorDlg::OnClickedButtonReloadSource)
 	ON_COMMAND(ID_BUTTON_DOWNLOAD, &CWin10LoginPicCollectorDlg::OnButtonDownload)
+	ON_COMMAND(ID_POPUP_MENUEITEM01, &CWin10LoginPicCollectorDlg::OnPopupMenueitem01)
+	ON_WM_CONTEXTMENU()
 END_MESSAGE_MAP()
 
 /// <summary>
@@ -434,6 +437,25 @@ void CWin10LoginPicCollectorDlg::OnClickedButtonCopy()
 #pragma endregion
 
 //------------------------------/
+//-       Menue Events         -/
+//------------------------------/
+#pragma region Menue Events 
+
+/// <summary>
+/// 
+/// </summary>
+void CWin10LoginPicCollectorDlg::OnPopupMenueitem01()
+{
+
+	// Status output
+	CString strStatus;
+	strStatus.Format(L"OnPopupMenueitem01");
+	m_StatusBar.SetPaneText(0, strStatus);
+}
+
+#pragma endregion
+
+//------------------------------/
 //-       Other Events         -/
 //------------------------------/
 #pragma region My Other Events
@@ -483,6 +505,57 @@ void CWin10LoginPicCollectorDlg::OnPaint()
 	{
 		CDialogEx::OnPaint();
 	}
+}
+
+/// <summary>
+/// OnContextMenu
+/// </summary>
+/// <param name=""></param>
+/// <param name=""></param>
+void CWin10LoginPicCollectorDlg::OnContextMenu(CWnd* pWnd, CPoint ptMousePos)
+{
+
+	//Some people might use a keyboard and not the mouse
+	if (ptMousePos.x == -1 && ptMousePos.y == -1)
+	{
+		auto nSelectedItem = m_ctrlDestination.GetSelectionMark(); //Get the selected item in the CListCtrl
+		if (nSelectedItem == -1)
+			return;
+
+		//Find the position
+		CRect itemRect;
+		m_ctrlDestination.GetItemRect(nSelectedItem, &itemRect, LVIR_BOUNDS);
+		ClientToScreen(&itemRect);
+		ptMousePos.x = itemRect.left + (itemRect.Width() / 10); //Some offset to display the menu user-friendly
+		ptMousePos.y = itemRect.top + itemRect.Height() / 2;
+	}
+
+	CPoint hitPoint = ptMousePos;
+	ScreenToClient(&hitPoint);
+
+	//UINT uFlags = 0;
+	//m_ctrlDestination.HitTest(hitPoint, &uFlags);
+	//if (uFlags & LVHT_NOWHERE)
+	//	return;
+
+	// Load the desired menu
+	CMenu mnuPopupSubmit;
+	mnuPopupSubmit.LoadMenu(IDR_SUBMIT);
+
+	//Get the previously created menu
+	// Get a pointer to the first item of the menu
+	CMenu* mnuPopupMenu = mnuPopupSubmit.GetSubMenu(0);
+	ASSERT(mnuPopupMenu);
+
+	mnuPopupMenu->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, ptMousePos.x, ptMousePos.y, this);
+
+	if (mnuPopupMenu)
+		mnuPopupMenu->TrackPopupMenu(TPM_LEFTALIGN, ptMousePos.x, ptMousePos.y, this);
+
+	// Status output
+	CString strStatus;
+	strStatus.Format(L"OnContextMenu Mouse x=%i y=%i",ptMousePos.x,ptMousePos.y);
+	m_StatusBar.SetPaneText(0, strStatus);
 }
 
 /// <summary>
