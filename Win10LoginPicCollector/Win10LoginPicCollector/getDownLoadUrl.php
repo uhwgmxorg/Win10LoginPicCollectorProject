@@ -16,8 +16,8 @@
     along with GUP.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-$lastestVersion = 1.0; // X.YZ
-$lastestVersionStr = "1.0"; // X.Y.Z
+$lastestVersion = 1.1; // X.YZ
+$lastestVersionStr = "1.1"; // X.Y.Z
 $DLURL = "https://uhwgmxorg.com/Win10LoginPicCollector/Download/Setup_Win10LoginPicCollector_x32_1_1_0_0.exe";
 $curentVersion = $_GET["version"];
 $param = $_GET["param"]; // optional
