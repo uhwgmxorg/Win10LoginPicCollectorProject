@@ -97,7 +97,7 @@ BEGIN_MESSAGE_MAP(CWin10LoginPicCollectorDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON_RELOAD_DESTINATION, &CWin10LoginPicCollectorDlg::OnClickedButtonReloadDestination)
 	ON_BN_CLICKED(IDC_BUTTON_RELOAD_SOURCE, &CWin10LoginPicCollectorDlg::OnClickedButtonReloadSource)
 	ON_COMMAND(ID_BUTTON_DOWNLOAD, &CWin10LoginPicCollectorDlg::OnButtonDownload)
-	ON_COMMAND(ID_POPUP_MENUEITEM01, &CWin10LoginPicCollectorDlg::OnPopupMenueItemSetWallPaper)
+	ON_COMMAND(ID_POPUP_MENUEITEM_SET_AS_WALPAPER, &CWin10LoginPicCollectorDlg::OnPopupMenueItemSetWallPaper)
 	ON_WM_CONTEXTMENU()
 END_MESSAGE_MAP()
 
@@ -473,6 +473,9 @@ void CWin10LoginPicCollectorDlg::OnPopupMenueItemSetWallPaper()
 
 	CString strfilePath = filePath.c_str();
 	SetWallPaper(strfilePath);
+
+	// deselect the item
+	m_ctrlDestination.SetItemState(nSelectedItem, LVIS_SELECTED, LVIS_SELECTED);
 
 	// Status output
 	CString strStatus;
