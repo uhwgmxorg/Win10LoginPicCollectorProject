@@ -97,7 +97,7 @@ BEGIN_MESSAGE_MAP(CWin10LoginPicCollectorDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON_RELOAD_DESTINATION, &CWin10LoginPicCollectorDlg::OnClickedButtonReloadDestination)
 	ON_BN_CLICKED(IDC_BUTTON_RELOAD_SOURCE, &CWin10LoginPicCollectorDlg::OnClickedButtonReloadSource)
 	ON_COMMAND(ID_BUTTON_DOWNLOAD, &CWin10LoginPicCollectorDlg::OnButtonDownload)
-	ON_COMMAND(ID_POPUP_MENUEITEM01, &CWin10LoginPicCollectorDlg::OnPopupMenueitem01)
+	ON_COMMAND(ID_POPUP_MENUEITEM01, &CWin10LoginPicCollectorDlg::OnPopupMenueItemSetWallPaper)
 	ON_WM_CONTEXTMENU()
 END_MESSAGE_MAP()
 
@@ -442,14 +442,41 @@ void CWin10LoginPicCollectorDlg::OnClickedButtonCopy()
 #pragma region Menue Events 
 
 /// <summary>
-/// 
+/// OnPopupMenueItemSetWallPaper
 /// </summary>
-void CWin10LoginPicCollectorDlg::OnPopupMenueitem01()
+void CWin10LoginPicCollectorDlg::OnPopupMenueItemSetWallPaper()
 {
+	// Get the index
+	int nSelectedItem = m_ctrlDestination.GetSelectionMark();
+	// Buffer for the LVITEM.pszText
+	wchar_t retText[MAX_PATH];
+	ZeroMemory(retText, sizeof(wchar_t));
+
+	LVITEM itemToGet;
+	ZeroMemory(&itemToGet, sizeof(LVITEM));
+
+	// Set the flag to LVIF_TEXT
+	itemToGet.mask = LVIF_TEXT;
+	// Specifies the required item
+	itemToGet.iItem = nSelectedItem;
+	// Assigns the buffer to pszText member variable
+	itemToGet.pszText = retText;
+	// IMPORTED set also cchTextMax
+	itemToGet.cchTextMax = MAX_PATH;
+	// Call GetItem(...) call
+	BOOL rc = m_ctrlDestination.GetItem(&itemToGet);
+
+	// Cuild file path name
+	wstring fileName(itemToGet.pszText);
+	wstring path = m_appSettings.m_strDestinationPath;
+	wstring filePath = path + L"\\" + fileName;
+
+	CString strfilePath = filePath.c_str();
+	SetWallPaper(strfilePath);
 
 	// Status output
 	CString strStatus;
-	strStatus.Format(L"OnPopupMenueitem01");
+	strStatus.Format(L"OnPopupMenueitem01 Item=%i File=%s",nSelectedItem,filePath.c_str());
 	m_StatusBar.SetPaneText(0, strStatus);
 }
 
@@ -514,7 +541,6 @@ void CWin10LoginPicCollectorDlg::OnPaint()
 /// <param name=""></param>
 void CWin10LoginPicCollectorDlg::OnContextMenu(CWnd* pWnd, CPoint ptMousePos)
 {
-
 	//Some people might use a keyboard and not the mouse
 	if (ptMousePos.x == -1 && ptMousePos.y == -1)
 	{
@@ -526,8 +552,8 @@ void CWin10LoginPicCollectorDlg::OnContextMenu(CWnd* pWnd, CPoint ptMousePos)
 		CRect itemRect;
 		m_ctrlDestination.GetItemRect(nSelectedItem, &itemRect, LVIR_BOUNDS);
 		ClientToScreen(&itemRect);
-		ptMousePos.x = itemRect.left + (itemRect.Width() / 10); //Some offset to display the menu user-friendly
-		ptMousePos.y = itemRect.top + itemRect.Height() / 2;
+		ptMousePos.x = itemRect.left + (itemRect.Width() + 400); //Some offset to display the menu user-friendly
+		ptMousePos.y = itemRect.top + itemRect.Height();
 	}
 
 	CPoint hitPoint = ptMousePos;
@@ -547,14 +573,12 @@ void CWin10LoginPicCollectorDlg::OnContextMenu(CWnd* pWnd, CPoint ptMousePos)
 	CMenu* mnuPopupMenu = mnuPopupSubmit.GetSubMenu(0);
 	ASSERT(mnuPopupMenu);
 
+	auto nSelectedItem = m_ctrlDestination.GetSelectionMark();
 	mnuPopupMenu->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, ptMousePos.x, ptMousePos.y, this);
-
-	if (mnuPopupMenu)
-		mnuPopupMenu->TrackPopupMenu(TPM_LEFTALIGN, ptMousePos.x, ptMousePos.y, this);
 
 	// Status output
 	CString strStatus;
-	strStatus.Format(L"OnContextMenu Mouse x=%i y=%i",ptMousePos.x,ptMousePos.y);
+	strStatus.Format(L"OnContextMenu Mouse x=%i y=%i Item=%i",ptMousePos.x,ptMousePos.y,nSelectedItem);
 	m_StatusBar.SetPaneText(0, strStatus);
 }
 
@@ -859,6 +883,24 @@ void CWin10LoginPicCollectorDlg::StartLoadListCtrlThread()
 {
 	AfxBeginThread(LoadListCtrlThreadProc,(LPVOID)this);
 	m_bRunning = TRUE; // Caution: in normal cases, this variable access must be protected with a semaphore
+}
+
+/// <summary>
+/// SetWallPaper
+/// </summary>
+/// <param name="wallPaperFile"></param>
+void CWin10LoginPicCollectorDlg::SetWallPaper(CString strWallPaperFile)
+{
+	LPWSTR  wallPaperFile = (LPWSTR)(LPCWSTR)strWallPaperFile;
+	wstring log = L"Set WallPaper to " + strWallPaperFile;
+	spdlog::info(log);
+
+	auto result = SystemParametersInfo(SPI_SETDESKWALLPAPER, 0, wallPaperFile, SPIF_UPDATEINIFILE);
+
+	// Status output
+	CString strStatus;
+	strStatus.Format(L"Set WallPaper to %s", strWallPaperFile);
+	m_StatusBar.SetPaneText(0, strStatus);
 }
 
 /// <summary>

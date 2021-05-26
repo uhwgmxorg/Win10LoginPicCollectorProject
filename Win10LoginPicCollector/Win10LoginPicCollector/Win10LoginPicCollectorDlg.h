@@ -74,8 +74,8 @@ private:
 	void SaveAppSettings();
 	void LoadListBox(std::vector<std::wstring> list);
 	void StartLoadListCtrlThread();	
+	void SetWallPaper(CString wallPaperFile);
 	void GetAndPrintLastErrorTxt(std::wstring strFuncName);
-	void InsertItem(CString strItem, int iImage);
 
 public:
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
@@ -89,7 +89,7 @@ public:
 	afx_msg void OnClickedButtonReloadDestination();
 	afx_msg void OnClickedButtonReloadSource();
 	afx_msg void OnButtonDownload();
-	afx_msg void OnPopupMenueitem01();
+	afx_msg void OnPopupMenueItemSetWallPaper();
 	afx_msg void OnContextMenu(CWnd* /*pWnd*/, CPoint /*point*/);
 };
 
