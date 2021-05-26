@@ -789,7 +789,7 @@ void CWin10LoginPicCollectorDlg::CheckForUpdates()
 	wstring exe_path = CToolsDllApp::GetExePath();
 	CString strHelp = exe_path.c_str();
 	CString strComand = strHelp + exeName.c_str();
-	CString strParameter = L"\\gup.xml";
+	CString strParameter = L"";
 	CString strPath = exe_path.c_str();
 
 	ShellExecute(m_hWnd, L"open", strComand, strParameter, strPath, SW_SHOWNORMAL);
