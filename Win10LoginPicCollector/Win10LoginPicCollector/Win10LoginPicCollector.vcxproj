@@ -236,7 +236,6 @@ copy $(SolutionDir)lib\*.* $(OutputPath)</Command>
     <ResourceCompile Include="Win10LoginPicCollector.rc" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="getDownLoadUrl.php" />
     <None Include="res\Win10LoginPicCollector.rc2" />
   </ItemGroup>
   <ItemGroup>

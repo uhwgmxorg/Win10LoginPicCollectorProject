@@ -562,10 +562,10 @@ void CWin10LoginPicCollectorDlg::OnContextMenu(CWnd* pWnd, CPoint ptMousePos)
 	CPoint hitPoint = ptMousePos;
 	ScreenToClient(&hitPoint);
 
-	//UINT uFlags = 0;
-	//m_ctrlDestination.HitTest(hitPoint, &uFlags);
-	//if (uFlags & LVHT_NOWHERE)
-	//	return;
+	UINT uFlags = 0;
+	m_ctrlDestination.HitTest(hitPoint, &uFlags);
+	if (uFlags & LVHT_NOWHERE)
+		return;
 
 	// Load the desired menu
 	CMenu mnuPopupSubmit;

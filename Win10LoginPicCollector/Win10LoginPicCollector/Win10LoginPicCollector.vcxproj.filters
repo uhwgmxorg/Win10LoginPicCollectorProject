@@ -54,7 +54,6 @@
     <None Include="res\Win10LoginPicCollector.rc2">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="getDownLoadUrl.php" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\Win10LoginPicCollector.ico">
