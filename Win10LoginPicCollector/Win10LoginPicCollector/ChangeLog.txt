@@ -1,6 +1,11 @@
 Program Win10LoginPicCollector ChangeLog
 
 
+   26.05.2021 1.1.1.0
+
+   - Bug Fixing with placement of Context-Menu
+
+
    25.05.2021 1.1.0.0
 
    - Add GUP and Check for Download

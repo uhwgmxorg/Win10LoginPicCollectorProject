@@ -99,6 +99,7 @@ BEGIN_MESSAGE_MAP(CWin10LoginPicCollectorDlg, CDialogEx)
 	ON_COMMAND(ID_BUTTON_DOWNLOAD, &CWin10LoginPicCollectorDlg::OnButtonDownload)
 	ON_COMMAND(ID_POPUP_MENUEITEM_SET_AS_WALPAPER, &CWin10LoginPicCollectorDlg::OnPopupMenueItemSetWallPaper)
 	ON_WM_CONTEXTMENU()
+	ON_WM_MOUSEMOVE()
 END_MESSAGE_MAP()
 
 /// <summary>
@@ -135,7 +136,7 @@ BOOL CWin10LoginPicCollectorDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// Set small icon
 
 	// TODO: Add extra initialization here
-	m_strVersion = L"1.1.0.0";
+	m_strVersion = L"1.1.1.0";
 
 #pragma region Set a Bold Font in Dlg Statics
 	// Get current font.
@@ -538,6 +539,24 @@ void CWin10LoginPicCollectorDlg::OnPaint()
 }
 
 /// <summary>
+/// OnMouseMove
+/// </summary>
+/// <param name="nFlags"></param>
+/// <param name="point"></param>
+void CWin10LoginPicCollectorDlg::OnMouseMove(UINT nFlags, CPoint point)
+{
+	// Juste for debuging
+#ifdef DEBUG
+	// Status output
+	CString strStatus;
+	strStatus.Format(L"MousePos x=%i y=%i", point.x, point.y);
+	m_StatusBar.SetPaneText(0, strStatus);
+#endif // DEBUG
+
+	CDialogEx::OnMouseMove(nFlags, point);
+}
+
+/// <summary>
 /// OnContextMenu
 /// </summary>
 /// <param name=""></param>
@@ -560,10 +579,10 @@ void CWin10LoginPicCollectorDlg::OnContextMenu(CWnd* pWnd, CPoint ptMousePos)
 	}
 
 	CPoint hitPoint = ptMousePos;
-	ScreenToClient(&hitPoint);
+	m_ctrlDestination.ScreenToClient(&hitPoint);
 
 	UINT uFlags = 0;
-	m_ctrlDestination.HitTest(hitPoint, &uFlags);
+	int index = m_ctrlDestination.HitTest(hitPoint, &uFlags);
 	if (uFlags & LVHT_NOWHERE)
 		return;
 
@@ -798,7 +817,6 @@ void CWin10LoginPicCollectorDlg::CheckForUpdates()
 	CString strStatus;
 	strStatus.Format(L"Check for Updates");
 	m_StatusBar.SetPaneText(0, strStatus);
-
 }
 
 /// <summary>

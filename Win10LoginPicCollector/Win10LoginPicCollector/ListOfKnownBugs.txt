@@ -1,7 +1,7 @@
 Program Win10LoginPicCollector ListOfKnownBugs
 
 
-    25.05.2021 1.1.0.0 Rev 0
+    25.05.2021 1.1.1.0 Rev 0
 
    - Sometimes images are copied that are 
      not supposed to be copied

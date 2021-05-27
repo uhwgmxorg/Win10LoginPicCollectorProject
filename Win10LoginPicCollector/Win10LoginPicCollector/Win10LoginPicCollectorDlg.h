@@ -91,6 +91,7 @@ public:
 	afx_msg void OnButtonDownload();
 	afx_msg void OnPopupMenueItemSetWallPaper();
 	afx_msg void OnContextMenu(CWnd* /*pWnd*/, CPoint /*point*/);
+	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 };
 
 UINT LoadListCtrlThreadProc(LPVOID lpvoid);
